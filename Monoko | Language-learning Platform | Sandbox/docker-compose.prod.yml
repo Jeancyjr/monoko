@@ -1,0 +1,326 @@
+# Production overrides for Monoko platform
+version: '3.8'
+
+services:
+  # Production MongoDB with replica set
+  mongodb:
+    image: mongo:7.0
+    command: mongod --replSet rs0 --bind_ip_all --auth
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      MONGO_INITDB_DATABASE: ${MONGO_DB_NAME}
+    volumes:
+      - mongodb_prod_data:/data/db
+      - mongodb_config:/data/configdb
+      - ./mongodb-init:/docker-entrypoint-initdb.d:ro
+      - ./backups:/backups
+    deploy:
+      resources:
+        limits:
+          memory: 2G
+          cpus: '1.0'
+        reservations:
+          memory: 1G
+          cpus: '0.5'
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Production Redis with persistence
+  redis:
+    image: redis:7.2-alpine
+    command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD}
+    volumes:
+      - redis_prod_data:/data
+      - ./redis/redis.conf:/usr/local/etc/redis/redis.conf:ro
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "5m"
+        max-file: "3"
+
+  # Production backend with optimizations
+  backend:
+    build:
+      target: production
+    environment:
+      NODE_ENV: production
+      NODE_OPTIONS: --max-old-space-size=1024
+      UV_THREADPOOL_SIZE: 16
+    volumes:
+      - ./content:/app/content:ro
+      - uploads_prod:/app/uploads
+      - ./logs:/app/logs
+    deploy:
+      replicas: 3
+      resources:
+        limits:
+          memory: 1G
+          cpus: '1.0'
+        reservations:
+          memory: 512M
+          cpus: '0.5'
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "20m"
+        max-file: "5"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Production Nginx with security hardening
+  nginx:
+    volumes:
+      - ./nginx/nginx-prod.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/conf.d:/etc/nginx/conf.d:ro
+      - ./ssl:/etc/nginx/ssl:ro
+      - ./logs/nginx:/var/log/nginx
+      - uploads_prod:/var/www/uploads:ro
+      - ./static:/var/www/static:ro
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.5'
+        reservations:
+          memory: 128M
+          cpus: '0.25'
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"
+        max-file: "10"
+
+  # Production monitoring stack
+  prometheus:
+    volumes:
+      - prometheus_prod_data:/prometheus
+      - ./monitoring/prometheus-prod.yml:/etc/prometheus/prometheus.yml:ro
+      - ./monitoring/rules:/etc/prometheus/rules:ro
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--storage.tsdb.retention.time=90d'
+      - '--storage.tsdb.retention.size=20GB'
+      - '--web.console.libraries=/etc/prometheus/console_libraries'
+      - '--web.console.templates=/etc/prometheus/consoles'
+      - '--web.enable-lifecycle'
+      - '--web.enable-admin-api'
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+    restart: unless-stopped
+
+  grafana:
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      GF_SECURITY_SECRET_KEY: ${GRAFANA_SECRET_KEY}
+      GF_SMTP_ENABLED: "true"
+      GF_SMTP_HOST: ${SMTP_HOST}
+      GF_SMTP_USER: ${SMTP_USER}
+      GF_SMTP_PASSWORD: ${SMTP_PASSWORD}
+      GF_SERVER_DOMAIN: monitoring.monoko.app
+      GF_SERVER_ROOT_URL: https://monitoring.monoko.app
+    volumes:
+      - grafana_prod_data:/var/lib/grafana
+      - ./monitoring/grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./monitoring/grafana/dashboards:/var/lib/grafana/dashboards:ro
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.5'
+        reservations:
+          memory: 256M
+          cpus: '0.25'
+    restart: unless-stopped
+
+  # Production log aggregation
+  fluentd:
+    image: fluent/fluentd:v1.16-1
+    volumes:
+      - ./logs:/fluentd/log
+      - ./fluentd/conf:/fluentd/etc:ro
+    environment:
+      FLUENTD_CONF: fluent.conf
+      FLUENTD_OPT: -v
+    deploy:
+      resources:
+        limits:
+          memory: 256M
+          cpus: '0.25'
+        reservations:
+          memory: 128M
+          cpus: '0.1'
+    restart: unless-stopped
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+  # Elasticsearch for log storage (optional)
+  elasticsearch:
+    image: elasticsearch:8.11.0
+    environment:
+      discovery.type: single-node
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+      xpack.security.enabled: "false"
+    volumes:
+      - elasticsearch_data:/usr/share/elasticsearch/data
+    ports:
+      - "9200:9200"
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+          cpus: '0.5'
+        reservations:
+          memory: 512M
+          cpus: '0.25'
+    restart: unless-stopped
+    profiles:
+      - logging
+
+  # Kibana for log visualization (optional)
+  kibana:
+    image: kibana:8.11.0
+    environment:
+      ELASTICSEARCH_HOSTS: http://elasticsearch:9200
+    ports:
+      - "5601:5601"
+    depends_on:
+      - elasticsearch
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+          cpus: '0.25'
+    restart: unless-stopped
+    profiles:
+      - logging
+
+  # Alert manager for notifications
+  alertmanager:
+    image: prom/alertmanager:latest
+    ports:
+      - "9093:9093"
+    volumes:
+      - ./monitoring/alertmanager.yml:/etc/alertmanager/alertmanager.yml:ro
+      - alertmanager_data:/alertmanager
+    command:
+      - '--config.file=/etc/alertmanager/alertmanager.yml'
+      - '--storage.path=/alertmanager'
+      - '--web.external-url=https://alerts.monoko.app'
+      - '--web.route-prefix=/'
+    deploy:
+      resources:
+        limits:
+          memory: 128M
+          cpus: '0.1'
+    restart: unless-stopped
+
+  # Backup service
+  backup:
+    image: alpine:latest
+    volumes:
+      - mongodb_prod_data:/data/mongodb:ro
+      - redis_prod_data:/data/redis:ro
+      - uploads_prod:/data/uploads:ro
+      - ./backups:/backups
+      - ./scripts/backup.sh:/backup.sh:ro
+    environment:
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+      AWS_BUCKET_NAME: ${BACKUP_BUCKET_NAME}
+    command: sh -c "apk add --no-cache aws-cli curl && crond -f"
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+      - redis
+
+  # SSL certificate renewal
+  certbot-renew:
+    image: certbot/certbot
+    volumes:
+      - ./ssl:/etc/letsencrypt
+      - ./nginx/webroot:/var/www/certbot
+    command: sh -c "while :; do certbot renew --webroot --webroot-path=/var/www/certbot --quiet; sleep 12h; done"
+    restart: unless-stopped
+
+# Production volumes with backup labels
+volumes:
+  mongodb_prod_data:
+    driver: local
+    labels:
+      backup: "daily"
+      retention: "30d"
+  redis_prod_data:
+    driver: local
+    labels:
+      backup: "daily"
+      retention: "7d"
+  uploads_prod:
+    driver: local
+    labels:
+      backup: "daily"
+      retention: "90d"
+  prometheus_prod_data:
+    driver: local
+    labels:
+      backup: "weekly"
+      retention: "365d"
+  grafana_prod_data:
+    driver: local
+    labels:
+      backup: "weekly"
+      retention: "90d"
+  alertmanager_data:
+    driver: local
+  elasticsearch_data:
+    driver: local
+    labels:
+      backup: "weekly"
+      retention: "30d"
+  mongodb_config:
+    driver: local
+
+# Production network with custom subnet
+networks:
+  monoko-network:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.20.0.0/16
+    labels:
+      environment: "production"
+      project: "monoko"

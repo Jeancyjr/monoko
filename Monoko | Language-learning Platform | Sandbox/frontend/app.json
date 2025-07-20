@@ -1,0 +1,63 @@
+{
+  "expo": {
+    "name": "Monoko",
+    "slug": "monoko-app",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#4CAF50"
+    },
+    "assetBundlePatterns": [
+      "**/*"
+    ],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.monoko.app",
+      "buildNumber": "1.0.0",
+      "icon": "./assets/icon.png"
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#4CAF50"
+      },
+      "package": "com.monoko.app",
+      "versionCode": 1,
+      "permissions": [
+        "CAMERA",
+        "RECORD_AUDIO",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png",
+      "name": "Monoko - Speak the Heart of Africa",
+      "shortName": "Monoko",
+      "description": "Learn African languages through culture, conversation, and community",
+      "backgroundColor": "#4CAF50",
+      "themeColor": "#4CAF50"
+    },
+    "plugins": [
+      "expo-camera",
+      "expo-av",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Monoko needs access to your photos for Snap & Learn feature.",
+          "cameraPermission": "Monoko needs access to your camera for Snap & Learn feature."
+        }
+      ]
+    ],
+    "extra": {
+      "appName": "Monoko",
+      "tagline": "Speak the Heart of Africa",
+      "supportedLanguages": ["sw", "ln", "am"],
+      "version": "1.0.0"
+    }
+  }
+}
