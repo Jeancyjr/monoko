@@ -1,0 +1,182 @@
+{
+  "language": "sw",
+  "languageName": "Swahili",
+  "nativeName": "Kiswahili",
+  "category": "basic-vocabulary",
+  "level": "beginner",
+  "words": [
+    {
+      "id": "sw_hello",
+      "swahili": "Jambo",
+      "english": "Hello",
+      "pronunciation": "JAHM-boh",
+      "audioUrl": "/audio/sw/jambo.mp3",
+      "category": "greetings",
+      "examples": [
+        {
+          "swahili": "Jambo, habari yako?",
+          "english": "Hello, how are you?",
+          "pronunciation": "JAHM-boh, hah-BAH-ree YAH-koh"
+        }
+      ],
+      "culturalNote": "Jambo is the most common casual greeting, especially used with tourists and foreigners."
+    },
+    {
+      "id": "sw_how_are_you",
+      "swahili": "Habari yako?",
+      "english": "How are you?",
+      "pronunciation": "hah-BAH-ree YAH-koh",
+      "audioUrl": "/audio/sw/habari-yako.mp3",
+      "category": "greetings",
+      "examples": [
+        {
+          "swahili": "Habari yako? Mzuri sana.",
+          "english": "How are you? Very well.",
+          "pronunciation": "hah-BAH-ree YAH-koh? mm-ZOO-ree SAH-nah"
+        }
+      ],
+      "culturalNote": "This shows genuine interest in someone's wellbeing and is more respectful than just 'Jambo'."
+    },
+    {
+      "id": "sw_thank_you",
+      "swahili": "Asante",
+      "english": "Thank you",
+      "pronunciation": "ah-SAHN-teh",
+      "audioUrl": "/audio/sw/asante.mp3",
+      "category": "courtesy",
+      "examples": [
+        {
+          "swahili": "Asante sana",
+          "english": "Thank you very much",
+          "pronunciation": "ah-SAHN-teh SAH-nah"
+        }
+      ],
+      "culturalNote": "Adding 'sana' (very much) shows extra appreciation and is always well received."
+    },
+    {
+      "id": "sw_family",
+      "swahili": "Familia",
+      "english": "Family",
+      "pronunciation": "fah-MEE-lee-ah",
+      "audioUrl": "/audio/sw/familia.mp3",
+      "category": "family",
+      "examples": [
+        {
+          "swahili": "Familia yangu ni kubwa",
+          "english": "My family is big",
+          "pronunciation": "fah-MEE-lee-ah YAHN-goo nee koo-BOO-gwah"
+        }
+      ],
+      "culturalNote": "Family is extremely important in East African culture - extended family often lives together."
+    },
+    {
+      "id": "sw_mother",
+      "swahili": "Mama",
+      "english": "Mother",
+      "pronunciation": "MAH-mah",
+      "audioUrl": "/audio/sw/mama.mp3",
+      "category": "family",
+      "examples": [
+        {
+          "swahili": "Mama yangu ni mwalimu",
+          "english": "My mother is a teacher",
+          "pronunciation": "MAH-mah YAHN-goo nee mm-wah-LEE-moo"
+        }
+      ],
+      "culturalNote": "The word 'Mama' is also used respectfully to address any older woman."
+    },
+    {
+      "id": "sw_father",
+      "swahili": "Baba",
+      "english": "Father",
+      "pronunciation": "BAH-bah",
+      "audioUrl": "/audio/sw/baba.mp3",
+      "category": "family",
+      "examples": [
+        {
+          "swahili": "Baba yangu anafanya kazi",
+          "english": "My father is working",
+          "pronunciation": "BAH-bah YAHN-goo ah-nah-FAHN-yah KAH-zee"
+        }
+      ],
+      "culturalNote": "Like 'Mama', 'Baba' can be used to respectfully address older men."
+    },
+    {
+      "id": "sw_water",
+      "swahili": "Maji",
+      "english": "Water",
+      "pronunciation": "MAH-jee",
+      "audioUrl": "/audio/sw/maji.mp3",
+      "category": "basic-needs",
+      "examples": [
+        {
+          "swahili": "Nataka maji",
+          "english": "I want water",
+          "pronunciation": "nah-TAH-kah MAH-jee"
+        }
+      ],
+      "culturalNote": "Water is precious in many parts of East Africa - asking for water is always understood and provided."
+    },
+    {
+      "id": "sw_food",
+      "swahili": "Chakula",
+      "english": "Food",
+      "pronunciation": "chah-KOO-lah",
+      "audioUrl": "/audio/sw/chakula.mp3",
+      "category": "basic-needs",
+      "examples": [
+        {
+          "swahili": "Chakula kizuri",
+          "english": "Good food",
+          "pronunciation": "chah-KOO-lah kee-ZOO-ree"
+        }
+      ],
+      "culturalNote": "Sharing food is a sign of friendship and hospitality in East African culture."
+    },
+    {
+      "id": "sw_house",
+      "swahili": "Nyumba",
+      "english": "House",
+      "pronunciation": "NYOOM-bah",
+      "audioUrl": "/audio/sw/nyumba.mp3",
+      "category": "home",
+      "examples": [
+        {
+          "swahili": "Nyumba yangu ni kubwa",
+          "english": "My house is big",
+          "pronunciation": "NYOOM-bah YAHN-goo nee koo-BOO-gwah"
+        }
+      ],
+      "culturalNote": "Traditional East African homes often have extended families living together."
+    },
+    {
+      "id": "sw_money",
+      "swahili": "Pesa",
+      "english": "Money",
+      "pronunciation": "PEH-sah",
+      "audioUrl": "/audio/sw/pesa.mp3",
+      "category": "practical",
+      "examples": [
+        {
+          "swahili": "Bei gani? - What price?",
+          "english": "How much money?",
+          "pronunciation": "BEH-ee GAH-nee"
+        }
+      ],
+      "culturalNote": "Bargaining is common in markets - learning numbers and 'pesa' is very practical."
+    }
+  ],
+  "categories": [
+    "greetings",
+    "courtesy", 
+    "family",
+    "basic-needs",
+    "home",
+    "practical"
+  ],
+  "totalWords": 10,
+  "estimatedLearningTime": "15 minutes",
+  "difficulty": "beginner",
+  "prerequisites": [],
+  "nextLessons": ["swahili-numbers", "swahili-time"]
+}

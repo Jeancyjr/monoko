@@ -1,0 +1,36 @@
+{
+  "name": "monoko",
+  "version": "1.0.0",
+  "description": "African language-learning platform - Speak the Heart of Africa",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run backend:dev\" \"npm run frontend:dev\"",
+    "backend:dev": "cd backend && npm run dev",
+    "frontend:dev": "cd frontend && npm start",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install",
+    "build": "cd frontend && npm run build",
+    "test": "npm run test:backend && npm run test:frontend",
+    "test:backend": "cd backend && npm test",
+    "test:frontend": "cd frontend && npm test"
+  },
+  "keywords": [
+    "african-languages",
+    "language-learning",
+    "swahili",
+    "lingala",
+    "amharic",
+    "mobile-app",
+    "education",
+    "africa"
+  ],
+  "author": "Monoko Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/monoko.git"
+  },
+  "homepage": "https://www.monoko.app"
+}

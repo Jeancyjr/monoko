@@ -1,0 +1,221 @@
+{
+  "language": "am",
+  "languageName": "Amharic",
+  "nativeName": "አማርኛ",
+  "category": "basic-vocabulary",
+  "level": "beginner",
+  "words": [
+    {
+      "id": "am_hello",
+      "amharic": "ሰላም",
+      "english": "Hello/Peace",
+      "pronunciation": "seh-LAHM",
+      "romanized": "selam",
+      "audioUrl": "/audio/am/selam.mp3",
+      "category": "greetings",
+      "examples": [
+        {
+          "amharic": "ሰላም ነህ?",
+          "english": "Hello, are you well?",
+          "pronunciation": "seh-LAHM neh",
+          "romanized": "selam neh?"
+        }
+      ],
+      "culturalNote": "Selam means both 'hello' and 'peace' - reflecting the importance of peace in Ethiopian greetings."
+    },
+    {
+      "id": "am_how_are_you",
+      "amharic": "እንዴት ነህ?",
+      "english": "How are you? (to a man)",
+      "pronunciation": "in-DEHT neh",
+      "romanized": "indet neh?",
+      "audioUrl": "/audio/am/indet-neh.mp3",
+      "category": "greetings",
+      "examples": [
+        {
+          "amharic": "እንዴት ነሽ?",
+          "english": "How are you? (to a woman)",
+          "pronunciation": "in-DEHT nesh",
+          "romanized": "indet nesh?"
+        }
+      ],
+      "culturalNote": "Amharic has different forms for addressing men (ነህ/neh) and women (ነሽ/nesh), showing respect for the person."
+    },
+    {
+      "id": "am_thank_you",
+      "amharic": "አመሰግናለሁ",
+      "english": "Thank you",
+      "pronunciation": "ah-meh-seh-gnah-leh-hoo",
+      "romanized": "ameseginalehu",
+      "audioUrl": "/audio/am/ameseginalehu.mp3",
+      "category": "courtesy",
+      "examples": [
+        {
+          "amharic": "በጣም አመሰግናለሁ",
+          "english": "Thank you very much",
+          "pronunciation": "beh-TAHM ah-meh-seh-gnah-leh-hoo",
+          "romanized": "betam ameseginalehu"
+        }
+      ],
+      "culturalNote": "This formal expression of gratitude shows respect and is always appreciated in Ethiopian culture."
+    },
+    {
+      "id": "am_mother",
+      "amharic": "እናት",
+      "english": "Mother",
+      "pronunciation": "ih-NAHT",
+      "romanized": "inat",
+      "audioUrl": "/audio/am/inat.mp3",
+      "category": "family",
+      "examples": [
+        {
+          "amharic": "እናቴ",
+          "english": "My mother",
+          "pronunciation": "ih-nah-TEH",
+          "romanized": "inate"
+        }
+      ],
+      "culturalNote": "Mothers hold a revered position in Ethiopian society. The Ethiopian Orthodox Church especially honors Mary, the mother of Jesus."
+    },
+    {
+      "id": "am_father",
+      "amharic": "አባት",
+      "english": "Father",
+      "pronunciation": "ah-BAHT",
+      "romanized": "abat",
+      "audioUrl": "/audio/am/abat.mp3",
+      "category": "family",
+      "examples": [
+        {
+          "amharic": "አባቴ",
+          "english": "My father",
+          "pronunciation": "ah-bah-TEH",
+          "romanized": "abate"
+        }
+      ],
+      "culturalNote": "Fathers are respected as family heads and decision-makers in traditional Ethiopian families."
+    },
+    {
+      "id": "am_water",
+      "amharic": "ውሃ",
+      "english": "Water",
+      "pronunciation": "woo-HAH",
+      "romanized": "wuha",
+      "audioUrl": "/audio/am/wuha.mp3",
+      "category": "basic-needs",
+      "examples": [
+        {
+          "amharic": "ውሃ እፈልጋለሁ",
+          "english": "I need water",
+          "pronunciation": "woo-HAH ih-fel-gah-leh-hoo",
+          "romanized": "wuha ifeligalehu"
+        }
+      ],
+      "culturalNote": "Ethiopia has many sacred water sources, and clean water is considered a blessing from God."
+    },
+    {
+      "id": "am_food",
+      "amharic": "ምግብ",
+      "english": "Food",
+      "pronunciation": "mih-GIHB",
+      "romanized": "migib",
+      "audioUrl": "/audio/am/migib.mp3",
+      "category": "basic-needs",
+      "examples": [
+        {
+          "amharic": "ኢትዮጵያዊ ምግብ",
+          "english": "Ethiopian food",
+          "pronunciation": "ee-tee-yoh-pee-yah-wee mih-GIHB",
+          "romanized": "ityopyawi migib"
+        }
+      ],
+      "culturalNote": "Ethiopian cuisine is unique with injera bread and various stews. Sharing food from one plate shows unity and friendship."
+    },
+    {
+      "id": "am_coffee",
+      "amharic": "ቡና",
+      "english": "Coffee",
+      "pronunciation": "boo-NAH",
+      "romanized": "buna",
+      "audioUrl": "/audio/am/buna.mp3",
+      "category": "culture",
+      "examples": [
+        {
+          "amharic": "ቡና መጠጣት",
+          "english": "Drinking coffee",
+          "pronunciation": "boo-NAH meh-teh-TAHT",
+          "romanized": "buna metetat"
+        }
+      ],
+      "culturalNote": "Ethiopia is the birthplace of coffee! The coffee ceremony is a central social ritual that can last hours."
+    },
+    {
+      "id": "am_book",
+      "amharic": "መጽሐፍ",
+      "english": "Book",
+      "pronunciation": "meh-tsih-HAHF",
+      "romanized": "metsihaf",
+      "audioUrl": "/audio/am/metsihaf.mp3",
+      "category": "education",
+      "examples": [
+        {
+          "amharic": "አማርኛ መጽሐፍ",
+          "english": "Amharic book",
+          "pronunciation": "ah-mahr-ih-nyah meh-tsih-HAHF",
+          "romanized": "amarigna metsihaf"
+        }
+      ],
+      "culturalNote": "Ethiopia has ancient manuscripts and a rich literary tradition. The Kebra Nagast is one famous Ethiopian text."
+    },
+    {
+      "id": "am_church",
+      "amharic": "ቤተ ክርስቲያን",
+      "english": "Church",
+      "pronunciation": "beh-teh kee-rihs-tee-YAHN",
+      "romanized": "bete kiristiyan",
+      "audioUrl": "/audio/am/bete-kiristiyan.mp3",
+      "category": "culture",
+      "examples": [
+        {
+          "amharic": "ቤተ ክርስቲያን መሄድ",
+          "english": "Going to church",
+          "pronunciation": "beh-teh kee-rihs-tee-YAHN meh-HEHD",
+          "romanized": "bete kiristiyan mehed"
+        }
+      ],
+      "culturalNote": "Ethiopian Orthodox Christianity has ancient roots. The rock churches of Lalibela are UNESCO World Heritage sites."
+    }
+  ],
+  "categories": [
+    "greetings",
+    "courtesy",
+    "family",
+    "basic-needs",
+    "culture",
+    "education"
+  ],
+  "totalWords": 10,
+  "estimatedLearningTime": "25 minutes",
+  "difficulty": "beginner",
+  "prerequisites": ["fidel-script-basics"],
+  "nextLessons": ["amharic-numbers", "amharic-family", "ethiopian-culture"],
+  "scriptInfo": {
+    "name": "Ge'ez Script (Fidel)",
+    "description": "Amharic uses the Ge'ez script, called Fidel, which has 33 basic characters, each with 7 forms showing different vowel sounds.",
+    "direction": "left-to-right",
+    "syllabic": true,
+    "uniqueFeatures": [
+      "Each character represents a syllable (consonant + vowel)",
+      "Based on ancient Ge'ez script used for liturgical texts",
+      "No distinction between uppercase and lowercase",
+      "Punctuation marks are different from Latin script"
+    ]
+  },
+  "culturalBackground": {
+    "overview": "Amharic is the working language of Ethiopia and second-most spoken Semitic language after Arabic. It's written in the beautiful Ge'ez script.",
+    "regions": ["Addis Ababa", "Amhara Region", "Most of Ethiopia as lingua franca"],
+    "historicalSignificance": "Ethiopia was never colonized, so Amharic developed without major European influence, maintaining its unique character.",
+    "religiousConnection": "Closely tied to Ethiopian Orthodox Christianity, with many religious terms and concepts embedded in daily language.",
+    "modernRelevance": "Used in government, education, and media throughout Ethiopia, making it essential for anyone living or working there."
+  }
+}

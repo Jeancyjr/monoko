@@ -1,0 +1,335 @@
+# Prometheus alerting rules for Monoko platform
+groups:
+  # API Health and Performance Alerts
+  - name: api.rules
+    interval: 30s
+    rules:
+      # High error rate
+      - alert: HighErrorRate
+        expr: |
+          (
+            rate(http_requests_total{job="monoko-backend",status=~"5.."}[5m]) /
+            rate(http_requests_total{job="monoko-backend"}[5m])
+          ) > 0.05
+        for: 2m
+        labels:
+          severity: critical
+          service: api
+          team: backend
+        annotations:
+          summary: "High error rate detected on Monoko API"
+          description: "Error rate is {{ $value | humanizePercentage }} for the last 5 minutes on {{ $labels.instance }}. This indicates potential issues with the application."
+          runbook_url: "https://docs.monoko.app/runbooks/high-error-rate"
+          dashboard_url: "https://grafana.monoko.app/d/api-overview"
+
+      # High response time
+      - alert: HighResponseTime
+        expr: |
+          histogram_quantile(0.95, 
+            rate(http_request_duration_seconds_bucket{job="monoko-backend"}[5m])
+          ) > 2.0
+        for: 3m
+        labels:
+          severity: warning
+          service: api
+          team: backend
+        annotations:
+          summary: "High API response time detected"
+          description: "95th percentile response time is {{ $value }}s on {{ $labels.instance }}, which exceeds the 2s threshold."
+          runbook_url: "https://docs.monoko.app/runbooks/high-response-time"
+
+      # API endpoint down
+      - alert: APIEndpointDown
+        expr: up{job="monoko-backend"} == 0
+        for: 1m
+        labels:
+          severity: critical
+          service: api
+          team: backend
+        annotations:
+          summary: "Monoko API endpoint is down"
+          description: "API endpoint {{ $labels.instance }} has been down for more than 1 minute."
+          runbook_url: "https://docs.monoko.app/runbooks/api-down"
+
+      # High request rate (potential DDoS)
+      - alert: HighRequestRate
+        expr: |
+          rate(http_requests_total{job="monoko-backend"}[5m]) > 1000
+        for: 2m
+        labels:
+          severity: warning
+          service: api
+          team: security
+        annotations:
+          summary: "Unusually high request rate detected"
+          description: "Request rate is {{ $value }} requests/second on {{ $labels.instance }}, which may indicate a DDoS attack."
+          runbook_url: "https://docs.monoko.app/runbooks/high-traffic"
+
+  # Database Alerts
+  - name: database.rules
+    interval: 1m
+    rules:
+      # MongoDB connection issues
+      - alert: MongoDBDown
+        expr: mongodb_up == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: database
+          team: infrastructure
+        annotations:
+          summary: "MongoDB is down"
+          description: "MongoDB instance {{ $labels.instance }} is not responding."
+          runbook_url: "https://docs.monoko.app/runbooks/mongodb-down"
+
+      # High MongoDB connections
+      - alert: MongoDBHighConnections
+        expr: |
+          mongodb_connections{state="current"} / mongodb_connections{state="available"} > 0.8
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+          team: infrastructure
+        annotations:
+          summary: "MongoDB connection usage is high"
+          description: "MongoDB connection usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}."
+
+      # Slow queries
+      - alert: MongoDBSlowQueries
+        expr: |
+          increase(mongodb_opcounters_query_total[5m]) > 1000
+        for: 5m
+        labels:
+          severity: warning
+          service: database
+          team: backend
+        annotations:
+          summary: "High number of slow MongoDB queries"
+          description: "{{ $value }} slow queries detected in the last 5 minutes on {{ $labels.instance }}."
+
+      # Redis connection issues
+      - alert: RedisDown
+        expr: redis_up == 0
+        for: 30s
+        labels:
+          severity: critical
+          service: cache
+          team: infrastructure
+        annotations:
+          summary: "Redis is down"
+          description: "Redis instance {{ $labels.instance }} is not responding."
+          runbook_url: "https://docs.monoko.app/runbooks/redis-down"
+
+      # High Redis memory usage
+      - alert: RedisHighMemoryUsage
+        expr: |
+          redis_memory_used_bytes / redis_config_maxmemory_bytes > 0.9
+        for: 5m
+        labels:
+          severity: warning
+          service: cache
+          team: infrastructure
+        annotations:
+          summary: "Redis memory usage is high"
+          description: "Redis memory usage is {{ $value | humanizePercentage }} on {{ $labels.instance }}."
+
+  # Infrastructure Alerts
+  - name: infrastructure.rules
+    interval: 1m
+    rules:
+      # High CPU usage
+      - alert: HighCPUUsage
+        expr: |
+          100 - (avg by (instance) (irate(node_cpu_seconds_total{mode="idle"}[5m])) * 100) > 85
+        for: 5m
+        labels:
+          severity: warning
+          service: infrastructure
+          team: infrastructure
+        annotations:
+          summary: "High CPU usage detected"
+          description: "CPU usage is {{ $value }}% on {{ $labels.instance }}."
+
+      # High memory usage
+      - alert: HighMemoryUsage
+        expr: |
+          (1 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes)) * 100 > 90
+        for: 5m
+        labels:
+          severity: critical
+          service: infrastructure
+          team: infrastructure
+        annotations:
+          summary: "High memory usage detected"
+          description: "Memory usage is {{ $value }}% on {{ $labels.instance }}."
+
+      # Low disk space
+      - alert: LowDiskSpace
+        expr: |
+          (node_filesystem_avail_bytes{fstype!="tmpfs"} / node_filesystem_size_bytes{fstype!="tmpfs"}) * 100 < 10
+        for: 5m
+        labels:
+          severity: critical
+          service: infrastructure
+          team: infrastructure
+        annotations:
+          summary: "Low disk space"
+          description: "Disk space is {{ $value }}% available on {{ $labels.instance }} {{ $labels.mountpoint }}."
+
+      # High network traffic
+      - alert: HighNetworkTraffic
+        expr: |
+          rate(node_network_receive_bytes_total[5m]) > 100000000  # 100MB/s
+        for: 5m
+        labels:
+          severity: warning
+          service: infrastructure
+          team: infrastructure
+        annotations:
+          summary: "High network traffic detected"
+          description: "Network receive rate is {{ $value | humanize }}B/s on {{ $labels.instance }}."
+
+  # Application-Specific Alerts
+  - name: application.rules
+    interval: 1m
+    rules:
+      # AI API failures
+      - alert: AIServiceFailures
+        expr: |
+          rate(monoko_ai_requests_total{status="error"}[5m]) > 0.1
+        for: 2m
+        labels:
+          severity: warning
+          service: ai
+          team: ai-ml
+        annotations:
+          summary: "AI service experiencing failures"
+          description: "AI service error rate is {{ $value }} errors/second."
+          runbook_url: "https://docs.monoko.app/runbooks/ai-service-failures"
+
+      # Lesson completion rate drop
+      - alert: LowLessonCompletionRate
+        expr: |
+          rate(monoko_lessons_completed_total[1h]) < 
+          rate(monoko_lessons_completed_total[1h] offset 24h) * 0.7
+        for: 30m
+        labels:
+          severity: warning
+          service: application
+          team: product
+        annotations:
+          summary: "Lesson completion rate has dropped significantly"
+          description: "Lesson completion rate is 30% lower than the same time yesterday."
+
+      # High user registration failures
+      - alert: HighRegistrationFailures
+        expr: |
+          rate(monoko_user_registrations_total{status="failed"}[5m]) /
+          rate(monoko_user_registrations_total[5m]) > 0.2
+        for: 5m
+        labels:
+          severity: warning
+          service: auth
+          team: backend
+        annotations:
+          summary: "High user registration failure rate"
+          description: "User registration failure rate is {{ $value | humanizePercentage }}."
+
+  # Security Alerts
+  - name: security.rules
+    interval: 30s
+    rules:
+      # Failed login attempts
+      - alert: HighFailedLoginAttempts
+        expr: |
+          rate(monoko_login_attempts_total{status="failed"}[5m]) > 10
+        for: 2m
+        labels:
+          severity: warning
+          service: security
+          team: security
+        annotations:
+          summary: "High number of failed login attempts"
+          description: "{{ $value }} failed login attempts per second detected."
+          runbook_url: "https://docs.monoko.app/runbooks/security-incident"
+
+      # SSL certificate expiring
+      - alert: SSLCertificateExpiring
+        expr: |
+          probe_ssl_earliest_cert_expiry - time() < 86400 * 30  # 30 days
+        for: 1h
+        labels:
+          severity: warning
+          service: infrastructure
+          team: infrastructure
+        annotations:
+          summary: "SSL certificate expiring soon"
+          description: "SSL certificate for {{ $labels.instance }} expires in {{ $value | humanizeDuration }}."
+
+      # Unusual API access patterns
+      - alert: UnusualAPIAccess
+        expr: |
+          rate(http_requests_total{job="monoko-backend"}[5m]) > 
+          (rate(http_requests_total{job="monoko-backend"}[5m] offset 1h) * 3)
+        for: 10m
+        labels:
+          severity: warning
+          service: security
+          team: security
+        annotations:
+          summary: "Unusual API access pattern detected"
+          description: "API access rate is 3x higher than usual, potential security incident."
+
+  # Business Metrics Alerts
+  - name: business.rules
+    interval: 5m
+    rules:
+      # Low daily active users
+      - alert: LowDailyActiveUsers
+        expr: |
+          monoko_daily_active_users < 1000
+        for: 6h
+        labels:
+          severity: warning
+          service: business
+          team: product
+        annotations:
+          summary: "Daily active users below threshold"
+          description: "Daily active users: {{ $value }}, below the 1000 threshold."
+
+      # High user churn rate
+      - alert: HighUserChurnRate
+        expr: |
+          monoko_user_churn_rate > 0.1  # 10% churn rate
+        for: 1h
+        labels:
+          severity: warning
+          service: business
+          team: product
+        annotations:
+          summary: "User churn rate is high"
+          description: "User churn rate is {{ $value | humanizePercentage }}."
+
+# Inhibit rules to reduce alert noise
+inhibit_rules:
+  # If API is down, don't alert on high response time
+  - source_match:
+      alertname: APIEndpointDown
+    target_match:
+      alertname: HighResponseTime
+    equal: ['instance']
+
+  # If database is down, don't alert on application errors
+  - source_match:
+      alertname: MongoDBDown
+    target_match:
+      alertname: HighErrorRate
+    equal: ['instance']
+
+  # If infrastructure has high CPU, don't alert on high response time
+  - source_match:
+      alertname: HighCPUUsage
+    target_match:
+      alertname: HighResponseTime
+    equal: ['instance']

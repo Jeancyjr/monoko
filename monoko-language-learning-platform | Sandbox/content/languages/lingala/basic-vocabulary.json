@@ -1,0 +1,188 @@
+{
+  "language": "ln",
+  "languageName": "Lingala",
+  "nativeName": "Lingála",
+  "category": "basic-vocabulary",
+  "level": "beginner",
+  "words": [
+    {
+      "id": "ln_hello",
+      "lingala": "Mbote",
+      "english": "Hello",
+      "pronunciation": "mm-BOH-teh",
+      "audioUrl": "/audio/ln/mbote.mp3",
+      "category": "greetings",
+      "examples": [
+        {
+          "lingala": "Mbote mama!",
+          "english": "Hello mother!",
+          "pronunciation": "mm-BOH-teh MAH-mah"
+        }
+      ],
+      "culturalNote": "Mbote is the most common greeting in Lingala, used throughout the day in both formal and informal situations."
+    },
+    {
+      "id": "ln_how_are_you",
+      "lingala": "Boni?",
+      "english": "How are you?",
+      "pronunciation": "BOH-nee",
+      "audioUrl": "/audio/ln/boni.mp3",
+      "category": "greetings",
+      "examples": [
+        {
+          "lingala": "Mbote, boni?",
+          "english": "Hello, how are you?",
+          "pronunciation": "mm-BOH-teh BOH-nee"
+        }
+      ],
+      "culturalNote": "This is a warm way to show interest in someone's wellbeing, very important in Congolese culture."
+    },
+    {
+      "id": "ln_thank_you",
+      "lingala": "Melesi",
+      "english": "Thank you",
+      "pronunciation": "meh-LEH-see",
+      "audioUrl": "/audio/ln/melesi.mp3",
+      "category": "courtesy",
+      "examples": [
+        {
+          "lingala": "Melesi mingi",
+          "english": "Thank you very much",
+          "pronunciation": "meh-LEH-see MEEN-ghee"
+        }
+      ],
+      "culturalNote": "Expressing gratitude is deeply valued in Congolese culture. 'Melesi mingi' shows extra appreciation."
+    },
+    {
+      "id": "ln_mother",
+      "lingala": "Mama",
+      "english": "Mother",
+      "pronunciation": "MAH-mah",
+      "audioUrl": "/audio/ln/mama.mp3",
+      "category": "family",
+      "examples": [
+        {
+          "lingala": "Mama na ngai",
+          "english": "My mother",
+          "pronunciation": "MAH-mah nah nn-GAH-ee"
+        }
+      ],
+      "culturalNote": "Mothers are highly respected in Congolese society. The word 'mama' can also be used respectfully for any older woman."
+    },
+    {
+      "id": "ln_father",
+      "lingala": "Tata",
+      "english": "Father",
+      "pronunciation": "TAH-tah",
+      "audioUrl": "/audio/ln/tata.mp3",
+      "category": "family",
+      "examples": [
+        {
+          "lingala": "Tata na ngai",
+          "english": "My father",
+          "pronunciation": "TAH-tah nah nn-GAH-ee"
+        }
+      ],
+      "culturalNote": "Like 'mama', 'tata' can be used respectfully to address older men, showing respect for elders."
+    },
+    {
+      "id": "ln_water",
+      "lingala": "Mai",
+      "english": "Water",
+      "pronunciation": "MAH-ee",
+      "audioUrl": "/audio/ln/mai.mp3",
+      "category": "basic-needs",
+      "examples": [
+        {
+          "lingala": "Nalingi mai",
+          "english": "I want water",
+          "pronunciation": "nah-LEEN-ghee MAH-ee"
+        }
+      ],
+      "culturalNote": "Clean water access is precious in many parts of Central Africa. Offering water to guests is a sign of hospitality."
+    },
+    {
+      "id": "ln_food",
+      "lingala": "Bilei",
+      "english": "Food",
+      "pronunciation": "bee-LEH-ee",
+      "audioUrl": "/audio/ln/bilei.mp3",
+      "category": "basic-needs",
+      "examples": [
+        {
+          "lingala": "Bilei elamu",
+          "english": "Delicious food",
+          "pronunciation": "bee-LEH-ee eh-LAH-moo"
+        }
+      ],
+      "culturalNote": "Sharing meals is central to Congolese social life. Traditional dishes like fufu and cassava are staples."
+    },
+    {
+      "id": "ln_music",
+      "lingala": "Miziki",
+      "english": "Music",
+      "pronunciation": "mee-ZEE-kee",
+      "audioUrl": "/audio/ln/miziki.mp3",
+      "category": "culture",
+      "examples": [
+        {
+          "lingala": "Miziki ya Congo",
+          "english": "Congolese music",
+          "pronunciation": "mee-ZEE-kee yah KOHN-goh"
+        }
+      ],
+      "culturalNote": "Congo is famous for its music! Soukous, rumba, and ndombolo are popular styles that have influenced African music worldwide."
+    },
+    {
+      "id": "ln_dance",
+      "lingala": "Kobina",
+      "english": "To dance",
+      "pronunciation": "koh-BEE-nah",
+      "audioUrl": "/audio/ln/kobina.mp3",
+      "category": "culture",
+      "examples": [
+        {
+          "lingala": "Nalingi kobina",
+          "english": "I love to dance",
+          "pronunciation": "nah-LEEN-ghee koh-BEE-nah"
+        }
+      ],
+      "culturalNote": "Dancing is an integral part of Congolese culture, expressing joy, celebration, and community spirit."
+    },
+    {
+      "id": "ln_love",
+      "lingala": "Bolingo",
+      "english": "Love",
+      "pronunciation": "boh-LEEN-goh",
+      "audioUrl": "/audio/ln/bolingo.mp3",
+      "category": "emotions",
+      "examples": [
+        {
+          "lingala": "Nalingi yo na bolingo",
+          "english": "I love you",
+          "pronunciation": "nah-LEEN-ghee yoh nah boh-LEEN-goh"
+        }
+      ],
+      "culturalNote": "Expressing love and affection is important in relationships. This phrase is used for deep, romantic love."
+    }
+  ],
+  "categories": [
+    "greetings",
+    "courtesy",
+    "family", 
+    "basic-needs",
+    "culture",
+    "emotions"
+  ],
+  "totalWords": 10,
+  "estimatedLearningTime": "18 minutes",
+  "difficulty": "beginner",
+  "prerequisites": [],
+  "nextLessons": ["lingala-family", "lingala-music-culture"],
+  "culturalBackground": {
+    "overview": "Lingala is primarily spoken in the Democratic Republic of Congo and the Republic of Congo. It's known as a language of music, commerce, and urban communication.",
+    "regions": ["Kinshasa", "Brazzaville", "Kisangani", "Mbandaka"],
+    "musicConnection": "Lingala is the language of famous Congolese rumba and soukous music, which has spread across Africa.",
+    "urbanLanguage": "Originally a trade language along the Congo River, Lingala has become the primary urban language in both Congos."
+  }
+}
