@@ -1,0 +1,57 @@
+{
+  "name": "monoko-mobile",
+  "version": "1.0.0",
+  "main": "node_modules/expo/AppEntry.js",
+  "description": "Monoko Mobile App - Learn African Languages",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "web": "expo start --web",
+    "build:android": "expo build:android",
+    "build:ios": "expo build:ios",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "expo": "~49.0.0",
+    "react": "18.2.0",
+    "react-native": "0.72.6",
+    "@react-navigation/native": "^6.1.9",
+    "@react-navigation/stack": "^6.3.20",
+    "@react-navigation/bottom-tabs": "^6.5.11",
+    "react-native-screens": "~3.22.0",
+    "react-native-safe-area-context": "4.6.3",
+    "expo-av": "~13.4.1",
+    "expo-camera": "~13.4.4",
+    "expo-file-system": "~15.4.5",
+    "expo-sqlite": "~11.3.3",
+    "expo-notifications": "~0.20.1",
+    "react-native-svg": "13.9.0",
+    "react-native-reanimated": "~3.3.0",
+    "react-native-gesture-handler": "~2.12.0",
+    "@reduxjs/toolkit": "^1.9.7",
+    "react-redux": "^8.1.3",
+    "axios": "^1.6.2",
+    "react-native-animatable": "^1.4.0",
+    "react-native-progress": "^5.0.1",
+    "react-native-vector-icons": "^10.0.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.23.6",
+    "@types/react": "~18.2.45",
+    "typescript": "^5.3.3",
+    "jest": "^29.7.0",
+    "@testing-library/react-native": "^12.4.2"
+  },
+  "keywords": [
+    "react-native",
+    "expo",
+    "mobile-app",
+    "african-languages",
+    "education"
+  ],
+  "author": "Monoko Team",
+  "license": "MIT",
+  "private": true
+}
