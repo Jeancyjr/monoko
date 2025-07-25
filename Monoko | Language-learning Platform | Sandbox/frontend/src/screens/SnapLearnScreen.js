@@ -1,15 +1,22 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
-  Image,
-  ScrollView,
   Alert,
   Dimensions,
+  ScrollView,
+  Modal,
+  Image,
+  Animated,
+  ActivityIndicator,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { Camera } from 'expo-camera';
+import * as ImagePicker from 'expo-image-picker';
+import * as MediaLibrary from 'expo-media-library';
+import { Audio } from 'expo-av';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector, useDispatch } from 'react-redux';
 import { colors, fonts, spacing, borderRadius, shadows } from '../theme';

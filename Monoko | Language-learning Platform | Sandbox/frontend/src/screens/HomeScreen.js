@@ -38,6 +38,14 @@ const HomeScreen = ({ navigation }) => {
       screen: 'SnapLearn',
     },
     {
+      id: 'cultural-learning',
+      title: 'Cultural Learning',
+      subtitle: 'Traditions & proverbs',
+      icon: 'explore',
+      color: colors.amharic,
+      screen: 'CulturalLearning',
+    },
+    {
       id: 'practice-games',
       title: 'Practice Games',
       subtitle: 'Fun exercises',
@@ -46,11 +54,19 @@ const HomeScreen = ({ navigation }) => {
       screen: 'Games',
     },
     {
+      id: 'achievements',
+      title: 'Achievements',
+      subtitle: 'Your progress',
+      icon: 'emoji-events',
+      color: colors.lingala,
+      screen: 'Achievements',
+    },
+    {
       id: 'live-local',
       title: 'Live with Local',
       subtitle: 'Speak with natives',
       icon: 'video-call',
-      color: colors.lingala,
+      color: colors.swahili,
       screen: 'LiveSessions',
     },
   ];

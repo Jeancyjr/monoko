@@ -18,6 +18,9 @@ import LiveSessionsScreen from './src/screens/LiveSessionsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import WordMatchGameScreen from './src/screens/WordMatchGameScreen';
 import LessonPlayerScreen from './src/screens/LessonPlayerScreen';
+import OnboardingScreen from './src/screens/OnboardingScreen';
+import AchievementsScreen from './src/screens/AchievementsScreen';
+import CulturalLearningScreen from './src/screens/CulturalLearningScreen';
 
 // Import store
 import { store } from './src/store/store';
@@ -159,6 +162,29 @@ export default function App() {
               options={{
                 headerShown: false,
                 presentation: 'modal',
+              }}
+            />
+            <Stack.Screen 
+              name="Onboarding" 
+              component={OnboardingScreen}
+              options={{
+                headerShown: false,
+                gestureEnabled: false,
+              }}
+            />
+            <Stack.Screen 
+              name="Achievements" 
+              component={AchievementsScreen}
+              options={{
+                headerShown: false,
+                presentation: 'modal',
+              }}
+            />
+            <Stack.Screen 
+              name="CulturalLearning" 
+              component={CulturalLearningScreen}
+              options={{
+                headerShown: false,
               }}
             />
           </Stack.Navigator>
