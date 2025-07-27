@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
 import { addXP, completeLesson } from '../store/store';
+import { GuideCharacter } from '../components/AfricanCharacters';
 
 const { width } = Dimensions.get('window');
 
@@ -156,7 +157,9 @@ const LessonPlayerScreen = ({ navigation, route }) => {
 
   const renderIntroduction = () => (
     <View style={styles.stepContainer}>
-      <Text style={styles.stepEmoji}>{currentStepData.image}</Text>
+      <View style={styles.stepEmoji}>
+        <GuideCharacter type="lesson" size={64} color={colors.primary} />
+      </View>
       <Text style={styles.stepTitle}>{currentStepData.title}</Text>
       <Text style={styles.stepContent}>{currentStepData.content}</Text>
       
@@ -381,7 +384,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   stepEmoji: {
-    fontSize: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.lg,
   },
   stepTitle: {

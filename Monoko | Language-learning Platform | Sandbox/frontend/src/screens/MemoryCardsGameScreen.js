@@ -13,6 +13,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
 import { addXP, updateStreak } from '../store/store';
+import { AchievementMascot } from '../components/AfricanCharacters';
 
 const { width } = Dimensions.get('window');
 
@@ -29,32 +30,32 @@ const MemoryCardsGameScreen = ({ navigation }) => {
   const [moves, setMoves] = useState(0);
   const [animations] = useState({});
 
-  const cardDatabase = {
+  const  cardDatabase = {
     sw: [
-      { id: 1, word: 'Simba', image: '🦁', meaning: 'Lion', category: 'animals' },
-      { id: 2, word: 'Nyoka', image: '🐍', meaning: 'Snake', category: 'animals' },
-      { id: 3, word: 'Ndege', image: '🐦', meaning: 'Bird', category: 'animals' },
-      { id: 4, word: 'Mti', image: '🌳', meaning: 'Tree', category: 'nature' },
-      { id: 5, word: 'Jua', image: '☀️', meaning: 'Sun', category: 'nature' },
-      { id: 6, word: 'Maji', image: '💧', meaning: 'Water', category: 'nature' },
-      { id: 7, word: 'Nyumba', image: '🏠', meaning: 'House', category: 'objects' },
-      { id: 8, word: 'Gari', image: '🚗', meaning: 'Car', category: 'objects' }
+      { id: 1, word: 'Simba', characterType: 'conversation', meaning: 'Lion', category: 'animals' },
+      { id: 2, word: 'Nyoka', characterType: 'cultural', meaning: 'Snake', category: 'animals' },
+      { id: 3, word: 'Ndege', characterType: 'vocabulary', meaning: 'Bird', category: 'animals' },
+      { id: 4, word: 'Mti', characterType: 'cultural', meaning: 'Tree', category: 'nature' },
+      { id: 5, word: 'Jua', characterType: 'streak', meaning: 'Sun', category: 'nature' },
+      { id: 6, word: 'Maji', characterType: 'vocabulary', meaning: 'Water', category: 'nature' },
+      { id: 7, word: 'Nyumba', characterType: 'first-steps', meaning: 'House', category: 'objects' },
+      { id: 8, word: 'Gari', characterType: 'vocabulary', meaning: 'Car', category: 'objects' }
     ],
     ln: [
-      { id: 1, word: 'Nkosi', image: '🦁', meaning: 'Lion', category: 'animals' },
-      { id: 2, word: 'Nyoka', image: '🐍', meaning: 'Snake', category: 'animals' },
-      { id: 3, word: 'Ndeke', image: '🐦', meaning: 'Bird', category: 'animals' },
-      { id: 4, word: 'Nzete', image: '🌳', meaning: 'Tree', category: 'nature' },
-      { id: 5, word: 'Moyi', image: '☀️', meaning: 'Sun', category: 'nature' },
-      { id: 6, word: 'Mai', image: '💧', meaning: 'Water', category: 'nature' }
+      { id: 1, word: 'Nkosi', characterType: 'conversation', meaning: 'Lion', category: 'animals' },
+      { id: 2, word: 'Nyoka', characterType: 'cultural', meaning: 'Snake', category: 'animals' },
+      { id: 3, word: 'Ndeke', characterType: 'vocabulary', meaning: 'Bird', category: 'animals' },
+      { id: 4, word: 'Nzete', characterType: 'cultural', meaning: 'Tree', category: 'nature' },
+      { id: 5, word: 'Moyi', characterType: 'streak', meaning: 'Sun', category: 'nature' },
+      { id: 6, word: 'Mai', characterType: 'vocabulary', meaning: 'Water', category: 'nature' }
     ],
     am: [
-      { id: 1, word: 'አንበሳ', image: '🦁', meaning: 'Lion', category: 'animals' },
-      { id: 2, word: 'እባብ', image: '🐍', meaning: 'Snake', category: 'animals' },
-      { id: 3, word: 'ወፍ', image: '🐦', meaning: 'Bird', category: 'animals' },
-      { id: 4, word: 'ዛፍ', image: '🌳', meaning: 'Tree', category: 'nature' },
-      { id: 5, word: 'ፀሐይ', image: '☀️', meaning: 'Sun', category: 'nature' },
-      { id: 6, word: 'ውሃ', image: '💧', meaning: 'Water', category: 'nature' }
+      { id: 1, word: 'አንበሳ', characterType: 'conversation', meaning: 'Lion', category: 'animals' },
+      { id: 2, word: 'እባብ', characterType: 'cultural', meaning: 'Snake', category: 'animals' },
+      { id: 3, word: 'ወፍ', characterType: 'vocabulary', meaning: 'Bird', category: 'animals' },
+      { id: 4, word: 'ዛፍ', characterType: 'cultural', meaning: 'Tree', category: 'nature' },
+      { id: 5, word: 'ፀሐይ', characterType: 'streak', meaning: 'Sun', category: 'nature' },
+      { id: 6, word: 'ውሃ', characterType: 'vocabulary', meaning: 'Water', category: 'nature' }
     ]
   };
 
@@ -91,7 +92,8 @@ const MemoryCardsGameScreen = ({ navigation }) => {
       gameCards.push({
         id: `${word.id}_image`,
         type: 'image',
-        content: word.image,
+        content: word.characterType,
+        characterType: word.characterType,
         pairId: word.id,
         meaning: word.meaning,
         category: word.category
@@ -197,7 +199,7 @@ const MemoryCardsGameScreen = ({ navigation }) => {
     
     setTimeout(() => {
       Alert.alert(
-        completed ? '🎉 Memory Master!' : '⏰ Time\'s Up!',
+        completed ? 'Memory Master!' : 'Time\'s Up!',
         `Final Score: ${finalScore}\nXP Earned: ${xpEarned}\nMoves: ${moves}\nMatched Pairs: ${matchedPairs.length}/6`,
         [
           { text: 'Play Again', onPress: initializeGame },
@@ -234,7 +236,9 @@ const MemoryCardsGameScreen = ({ navigation }) => {
           {showContent ? (
             <>
               {card.type === 'image' ? (
-                <Text style={styles.cardEmoji}>{card.content}</Text>
+                <View style={styles.cardCharacter}>
+                  <AchievementMascot type={card.characterType || 'vocabulary'} size={24} />
+                </View>
               ) : (
                 <Text style={styles.cardWord}>{card.content}</Text>
               )}
@@ -443,8 +447,9 @@ const styles = StyleSheet.create({
     width: '100%',
     padding: spacing.xs,
   },
-  cardEmoji: {
-    fontSize: 32,
+  cardCharacter: {
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.xs,
   },
   cardWord: {

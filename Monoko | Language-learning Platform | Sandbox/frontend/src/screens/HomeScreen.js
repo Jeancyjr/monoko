@@ -14,6 +14,7 @@ import { colors, fonts, spacing, borderRadius } from '../theme';
 import { setSelectedLanguage } from '../store/store';
 import MonokoLogo from '../components/MonokoLogo';
 import { FadeInView, ScaleInView, SlideInView, StaggeredList } from '../components/AnimatedComponents';
+import { LanguageCharacter, GuideCharacter } from '../components/AfricanCharacters';
 
 const { width } = Dimensions.get('window');
 
@@ -74,9 +75,9 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   const languages = [
-    { code: 'sw', name: 'Swahili', flag: '🇰🇪', color: colors.swahili },
-    { code: 'ln', name: 'Lingala', flag: '🇨🇩', color: colors.lingala },
-    { code: 'am', name: 'Amharic', flag: '🇪🇹', color: colors.amharic },
+    { code: 'sw', name: 'Swahili', character: <LanguageCharacter language="sw" size={32} />, color: colors.swahili },
+    { code: 'ln', name: 'Lingala', character: <LanguageCharacter language="ln" size={32} />, color: colors.lingala },
+    { code: 'am', name: 'Amharic', character: <LanguageCharacter language="am" size={32} />, color: colors.amharic },
   ];
 
   return (
@@ -90,8 +91,11 @@ const HomeScreen = ({ navigation }) => {
             showTagline={true} 
             style={styles.logoContainer}
           />
-          <View style={styles.greetingContainer}>
-            <Text style={styles.greeting}>Jambo! 👋</Text>
+          <View style={styles.greetingWrapper}>
+            <View style={styles.greetingContainer}>
+              <GuideCharacter type="welcome" size={24} color={colors.white} />
+              <Text style={styles.greeting}>Jambo!</Text>
+            </View>
             <Text style={styles.subtitle}>Ready to learn today?</Text>
           </View>
         </View>
@@ -128,7 +132,7 @@ const HomeScreen = ({ navigation }) => {
                 ]}
                 onPress={() => dispatch(setSelectedLanguage(language.code))}
               >
-                <Text style={styles.languageFlag}>{language.flag}</Text>
+                <View style={styles.languageFlag}>{language.character}</View>
                 <Text style={styles.languageName}>{language.name}</Text>
                 {selectedLanguage === language.code && (
                   <ScaleInView delay={0}>
@@ -173,7 +177,7 @@ const HomeScreen = ({ navigation }) => {
             )}
           </View>
           <Text style={styles.goalText}>
-            {dailyGoalMet ? 'Great job! Goal completed today! 🎉' : 'Complete 1 lesson today'}
+            {dailyGoalMet ? 'Great job! Goal completed today!' : 'Complete 1 lesson today'}
           </Text>
           <View style={styles.progressBar}>
             <SlideInView 
@@ -243,8 +247,13 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     letterSpacing: 0.5,
   },
-  greetingContainer: {
+  greetingWrapper: {
     marginTop: spacing.sm,
+  },
+  greetingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   greeting: {
     fontSize: fonts.lg,
@@ -322,7 +331,8 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   languageFlag: {
-    fontSize: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.xs,
   },
   languageName: {

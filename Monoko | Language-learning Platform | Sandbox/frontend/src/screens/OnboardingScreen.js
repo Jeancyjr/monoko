@@ -14,6 +14,7 @@ import { useDispatch } from 'react-redux';
 import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
 import MonokoLogo from '../components/MonokoLogo';
 import { setOnboardingComplete, setSelectedLanguage } from '../store/store';
+import { GuideCharacter, LanguageCharacter } from '../components/AfricanCharacters';
 
 const { width, height } = Dimensions.get('window');
 
@@ -32,7 +33,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'Welcome to Monoko',
       subtitle: 'Your journey to speaking African languages starts here',
       content: 'Learn through culture, connect with native speakers, and discover the heart of Africa through language.',
-      icon: '🌍',
+      icon: <GuideCharacter type="welcome" size={64} color={colors.primary} />,
       showLogo: true,
     },
     {
@@ -40,7 +41,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'AI-Powered Learning',
       subtitle: 'Transform your world into a classroom',
       content: 'Use Snap & Learn to instantly translate objects around you into Swahili, Lingala, or Amharic.',
-      icon: '📸',
+      icon: <GuideCharacter type="camera" size={64} color={colors.secondary} />,
       features: [
         { icon: 'camera-alt', text: 'Point and learn vocabulary' },
         { icon: 'volume-up', text: 'Hear native pronunciation' },
@@ -52,7 +53,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'Live with a Local',
       subtitle: 'Practice with native speakers',
       content: 'Connect with verified native speakers from Kenya, Congo, and Ethiopia for authentic conversation practice.',
-      icon: '💬',
+      icon: <GuideCharacter type="conversation" size={64} color={colors.accent} />,
       features: [
         { icon: 'video-call', text: '1-on-1 video sessions' },
         { icon: 'schedule', text: 'Flexible scheduling' },
@@ -64,7 +65,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'Learn Through Play',
       subtitle: 'Engaging games and achievements',
       content: 'Earn XP, maintain streaks, and unlock achievements as you progress through your language learning journey.',
-      icon: '🎮',
+      icon: <GuideCharacter type="games" size={64} color={colors.warning} />,
       features: [
         { icon: 'videogame-asset', text: 'Interactive word games' },
         { icon: 'local-fire-department', text: 'Daily learning streaks' },
@@ -76,7 +77,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'Choose Your Language',
       subtitle: 'Which African language would you like to learn?',
       content: 'Start with one language and explore others as you progress.',
-      icon: '🗣️',
+      icon: <GuideCharacter type="language" size={64} color={colors.primary} />,
       isLanguageSelection: true,
     },
   ];
@@ -86,7 +87,7 @@ const OnboardingScreen = ({ navigation }) => {
       code: 'sw',
       name: 'Swahili',
       nativeName: 'Kiswahili',
-      flag: '🇰🇪',
+      character: <LanguageCharacter language="sw" size={48} />,
       speakers: '200M+ speakers',
       regions: 'Kenya, Tanzania, Uganda',
       color: colors.swahili,
@@ -96,7 +97,7 @@ const OnboardingScreen = ({ navigation }) => {
       code: 'ln',
       name: 'Lingala',
       nativeName: 'Lingála',
-      flag: '🇨🇩',
+      character: <LanguageCharacter language="ln" size={48} />,
       speakers: '70M+ speakers',
       regions: 'Congo DRC, Congo Republic',
       color: colors.lingala,
@@ -106,7 +107,7 @@ const OnboardingScreen = ({ navigation }) => {
       code: 'am',
       name: 'Amharic',
       nativeName: 'አማርኛ',
-      flag: '🇪🇹',
+      character: <LanguageCharacter language="am" size={48} />,
       speakers: '57M+ speakers',
       regions: 'Ethiopia',
       color: colors.amharic,
@@ -177,7 +178,7 @@ const OnboardingScreen = ({ navigation }) => {
               },
             ]}
           >
-            <Text style={styles.stepIcon}>{step.icon}</Text>
+            <View style={styles.stepIcon}>{step.icon}</View>
             <Text style={styles.stepTitle}>{step.title}</Text>
             <Text style={styles.stepSubtitle}>{step.subtitle}</Text>
             <Text style={styles.stepDescription}>{step.content}</Text>
@@ -202,7 +203,7 @@ const OnboardingScreen = ({ navigation }) => {
                       activeOpacity={0.8}
                     >
                       <View style={styles.languageHeader}>
-                        <Text style={styles.languageFlag}>{language.flag}</Text>
+                        <View style={styles.languageFlag}>{language.character}</View>
                         <View style={styles.languageInfo}>
                           <Text style={styles.languageName}>{language.name}</Text>
                           <Text style={styles.languageNative}>{language.nativeName}</Text>
@@ -245,7 +246,7 @@ const OnboardingScreen = ({ navigation }) => {
               <MonokoLogo size="large" color="primary" showTagline={true} />
             </View>
           ) : (
-            <Text style={styles.stepIcon}>{step.icon}</Text>
+            <View style={styles.stepIcon}>{step.icon}</View>
           )}
           
           <Text style={styles.stepTitle}>{step.title}</Text>
@@ -394,7 +395,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xl,
   },
   stepIcon: {
-    fontSize: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.lg,
   },
   stepTitle: {
@@ -466,7 +468,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   languageFlag: {
-    fontSize: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: spacing.md,
   },
   languageInfo: {
