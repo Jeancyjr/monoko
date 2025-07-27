@@ -56,6 +56,7 @@ app.use('/api/progress', require('./routes/progress'));
 app.use('/api/games', require('./routes/games'));
 app.use('/api/snap-learn', require('./routes/snapLearn'));
 app.use('/api/live-sessions', require('./routes/liveSessions'));
+app.use('/api', require('./routes/ai'));
 
 // Health check endpoint
 app.get('/health', (req, res) => {

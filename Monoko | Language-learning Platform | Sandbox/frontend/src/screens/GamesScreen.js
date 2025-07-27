@@ -105,16 +105,13 @@ const GamesScreen = ({ navigation }) => {
         navigation.navigate('WordMatchGame');
         break;
       case 'echo-me':
-        // TODO: Navigate to Echo Me game
-        console.log('Echo Me game - coming soon!');
+        navigation.navigate('EchoMeGame');
         break;
       case 'memory-cards':
-        // TODO: Navigate to Memory Cards game
-        console.log('Memory Cards game - coming soon!');
+        navigation.navigate('MemoryCardsGame');
         break;
       case 'trace-it':
-        // TODO: Navigate to Trace It game
-        console.log('Trace It game - coming soon!');
+        navigation.navigate('TraceItGame');
         break;
       default:
         console.log('Game not implemented yet:', game.title);

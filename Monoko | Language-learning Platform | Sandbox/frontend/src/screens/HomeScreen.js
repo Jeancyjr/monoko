@@ -6,12 +6,14 @@ import {
   ScrollView,
   TouchableOpacity,
   Dimensions,
+  Animated,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors, fonts, spacing, borderRadius } from '../theme';
 import { setSelectedLanguage } from '../store/store';
 import MonokoLogo from '../components/MonokoLogo';
+import { FadeInView, ScaleInView, SlideInView, StaggeredList } from '../components/AnimatedComponents';
 
 const { width } = Dimensions.get('window');
 
@@ -98,83 +100,85 @@ const HomeScreen = ({ navigation }) => {
         </TouchableOpacity>
       </View>
 
-      {/* Stats Cards */}
       <View style={styles.statsContainer}>
-        <View style={styles.statCard}>
-          <Icon name="local-fire-department" size={24} color={colors.warning} />
-          <Text style={styles.statNumber}>{streak}</Text>
-          <Text style={styles.statLabel}>Day Streak</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Icon name="stars" size={24} color={colors.primary} />
-          <Text style={styles.statNumber}>{totalXP}</Text>
-          <Text style={styles.statLabel}>Total XP</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Icon name="trending-up" size={24} color={colors.secondary} />
-          <Text style={styles.statNumber}>{currentLevel}</Text>
-          <Text style={styles.statLabel}>Level</Text>
-        </View>
+        {[
+          { icon: 'local-fire-department', value: streak, label: 'Day Streak', color: colors.warning },
+          { icon: 'stars', value: totalXP, label: 'Total XP', color: colors.primary },
+          { icon: 'trending-up', value: currentLevel, label: 'Level', color: colors.secondary },
+        ].map((stat, index) => (
+          <ScaleInView key={stat.label} delay={index * 100} style={styles.statCard}>
+            <View style={[styles.iconContainer, { backgroundColor: `${stat.color}20` }]}>
+              <Icon name={stat.icon} size={24} color={stat.color} />
+            </View>
+            <Text style={styles.statNumber}>{stat.value}</Text>
+            <Text style={styles.statLabel}>{stat.label}</Text>
+          </ScaleInView>
+        ))}
       </View>
 
-      {/* Language Selection */}
-      <View style={styles.section}>
+      <SlideInView delay={300} style={styles.section}>
         <Text style={styles.sectionTitle}>Choose Your Language</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {languages.map((language) => (
-            <TouchableOpacity
-              key={language.code}
-              style={[
-                styles.languageCard,
-                selectedLanguage === language.code && styles.selectedLanguageCard
-              ]}
-              onPress={() => dispatch(setSelectedLanguage(language.code))}
-            >
-              <Text style={styles.languageFlag}>{language.flag}</Text>
-              <Text style={styles.languageName}>{language.name}</Text>
-              {selectedLanguage === language.code && (
-                <Icon name="check-circle" size={16} color={language.color} />
-              )}
-            </TouchableOpacity>
+          {languages.map((language, index) => (
+            <FadeInView key={language.code} delay={400 + index * 100}>
+              <TouchableOpacity
+                style={[
+                  styles.languageCard,
+                  selectedLanguage === language.code && styles.selectedLanguageCard
+                ]}
+                onPress={() => dispatch(setSelectedLanguage(language.code))}
+              >
+                <Text style={styles.languageFlag}>{language.flag}</Text>
+                <Text style={styles.languageName}>{language.name}</Text>
+                {selectedLanguage === language.code && (
+                  <ScaleInView delay={0}>
+                    <Icon name="check-circle" size={16} color={language.color} />
+                  </ScaleInView>
+                )}
+              </TouchableOpacity>
+            </FadeInView>
           ))}
         </ScrollView>
-      </View>
+      </SlideInView>
 
-      {/* Quick Actions */}
-      <View style={styles.section}>
+      <SlideInView delay={500} style={styles.section}>
         <Text style={styles.sectionTitle}>Quick Actions</Text>
         <View style={styles.quickActionsGrid}>
-          {quickActions.map((action) => (
-            <TouchableOpacity
-              key={action.id}
-              style={styles.actionCard}
-              onPress={() => navigation.navigate(action.screen)}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.actionIcon, { backgroundColor: `${action.color}20` }]}>
-                <Icon name={action.icon} size={24} color={action.color} />
-              </View>
-              <Text style={styles.actionTitle}>{action.title}</Text>
-              <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
-            </TouchableOpacity>
+          {quickActions.map((action, index) => (
+            <ScaleInView key={action.id} delay={600 + index * 100}>
+              <TouchableOpacity
+                style={styles.actionCard}
+                onPress={() => navigation.navigate(action.screen)}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.actionIcon, { backgroundColor: `${action.color}20` }]}>
+                  <Icon name={action.icon} size={24} color={action.color} />
+                </View>
+                <Text style={styles.actionTitle}>{action.title}</Text>
+                <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
+              </TouchableOpacity>
+            </ScaleInView>
           ))}
         </View>
-      </View>
+      </SlideInView>
 
-      {/* Daily Goal */}
-      <View style={styles.section}>
+      <FadeInView delay={800} style={styles.section}>
         <View style={styles.goalContainer}>
           <View style={styles.goalHeader}>
             <Text style={styles.sectionTitle}>Daily Goal</Text>
             {dailyGoalMet && (
-              <Icon name="check-circle" size={24} color={colors.success} />
+              <ScaleInView delay={0}>
+                <Icon name="check-circle" size={24} color={colors.success} />
+              </ScaleInView>
             )}
           </View>
           <Text style={styles.goalText}>
             {dailyGoalMet ? 'Great job! Goal completed today! 🎉' : 'Complete 1 lesson today'}
           </Text>
           <View style={styles.progressBar}>
-            <View 
+            <SlideInView 
+              direction="right"
+              delay={100}
               style={[
                 styles.progressFill, 
                 { width: dailyGoalMet ? '100%' : '60%' }
@@ -182,21 +186,24 @@ const HomeScreen = ({ navigation }) => {
             />
           </View>
         </View>
-      </View>
+      </FadeInView>
 
-      {/* Cultural Tip */}
-      <View style={styles.section}>
+      <SlideInView delay={900} direction="up" style={styles.section}>
         <View style={styles.culturalTipCard}>
-          <Icon name="lightbulb" size={24} color={colors.primary} />
+          <ScaleInView delay={100}>
+            <Icon name="lightbulb" size={24} color={colors.primary} />
+          </ScaleInView>
           <View style={styles.tipContent}>
-            <Text style={styles.tipTitle}>Cultural Tip</Text>
-            <Text style={styles.tipText}>
-              In Swahili culture, greeting is very important. "Jambo" is casual, 
-              while "Habari yako?" shows more respect and interest in someone's well-being.
-            </Text>
+            <FadeInView delay={200}>
+              <Text style={styles.tipTitle}>Cultural Tip</Text>
+              <Text style={styles.tipText}>
+                In Swahili culture, greeting is very important. "Jambo" is casual, 
+                while "Habari yako?" shows more respect and interest in someone's well-being.
+              </Text>
+            </FadeInView>
           </View>
         </View>
-      </View>
+      </SlideInView>
     </ScrollView>
   );
 };
@@ -267,9 +274,17 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: colors.white,
     padding: spacing.md,
-    borderRadius: borderRadius.md,
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
-    ...require('../theme').shadows.small,
+    ...require('../theme').shadows.medium,
+  },
+  iconContainer: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
   },
   statNumber: {
     fontSize: fonts.xl,

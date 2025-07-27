@@ -24,6 +24,7 @@ const OnboardingScreen = ({ navigation }) => {
   const scrollViewRef = useRef(null);
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(50));
+  const [languageScaleAnims] = useState({});
 
   const onboardingSteps = [
     {
@@ -114,19 +115,15 @@ const OnboardingScreen = ({ navigation }) => {
   ];
 
   useEffect(() => {
-    // Animate entrance
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    fadeAnim.setValue(0);
+    slideAnim.setValue(50);
+    
+    const animations = [
+      createTimingAnimation(fadeAnim, 1, 800),
+      createSpringAnimation(slideAnim, 0, { tension: 80, friction: 10 }),
+    ];
+    
+    Animated.stagger(200, animations).start();
   }, [currentStep]);
 
   const handleNext = () => {
@@ -146,6 +143,16 @@ const OnboardingScreen = ({ navigation }) => {
   };
 
   const handleLanguageSelect = (languageCode) => {
+    if (!languageScaleAnims[languageCode]) {
+      languageScaleAnims[languageCode] = new Animated.Value(1);
+    }
+    
+    const scaleAnim = languageScaleAnims[languageCode];
+    Animated.sequence([
+      createSpringAnimation(scaleAnim, 1.05, { tension: 150, friction: 8 }),
+      createSpringAnimation(scaleAnim, 1, { tension: 150, friction: 8 }),
+    ]).start();
+    
     setLocalSelectedLanguage(languageCode);
   };
 
@@ -176,34 +183,45 @@ const OnboardingScreen = ({ navigation }) => {
             <Text style={styles.stepDescription}>{step.content}</Text>
 
             <View style={styles.languagesContainer}>
-              {languages.map((language) => (
-                <TouchableOpacity
-                  key={language.code}
-                  style={[
-                    styles.languageCard,
-                    selectedLanguage === language.code && styles.selectedLanguageCard,
-                    { borderColor: language.color },
-                  ]}
-                  onPress={() => handleLanguageSelect(language.code)}
-                  activeOpacity={0.8}
-                >
-                  <View style={styles.languageHeader}>
-                    <Text style={styles.languageFlag}>{language.flag}</Text>
-                    <View style={styles.languageInfo}>
-                      <Text style={styles.languageName}>{language.name}</Text>
-                      <Text style={styles.languageNative}>{language.nativeName}</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.languageSpeakers}>{language.speakers}</Text>
-                  <Text style={styles.languageRegions}>{language.regions}</Text>
-                  <Text style={styles.languageDescription}>{language.description}</Text>
-                  
-                  {selectedLanguage === language.code && (
-                    <View style={[styles.selectedIndicator, { backgroundColor: language.color }]}>
-                      <Icon name="check" size={20} color={colors.white} />
-                    </View>
-                  )}
-                </TouchableOpacity>
+              {languages.map((language, index) => (
+                <ScaleInView key={language.code} delay={index * 150}>
+                  <Animated.View
+                    style={{
+                      transform: [{ 
+                        scale: languageScaleAnims[language.code] || new Animated.Value(1) 
+                      }]
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={[
+                        styles.languageCard,
+                        selectedLanguage === language.code && styles.selectedLanguageCard,
+                        { borderColor: language.color },
+                      ]}
+                      onPress={() => handleLanguageSelect(language.code)}
+                      activeOpacity={0.8}
+                    >
+                      <View style={styles.languageHeader}>
+                        <Text style={styles.languageFlag}>{language.flag}</Text>
+                        <View style={styles.languageInfo}>
+                          <Text style={styles.languageName}>{language.name}</Text>
+                          <Text style={styles.languageNative}>{language.nativeName}</Text>
+                        </View>
+                      </View>
+                      <Text style={styles.languageSpeakers}>{language.speakers}</Text>
+                      <Text style={styles.languageRegions}>{language.regions}</Text>
+                      <Text style={styles.languageDescription}>{language.description}</Text>
+                      
+                      {selectedLanguage === language.code && (
+                        <ScaleInView delay={0}>
+                          <View style={[styles.selectedIndicator, { backgroundColor: language.color }]}>
+                            <Icon name="check" size={20} color={colors.white} />
+                          </View>
+                        </ScaleInView>
+                      )}
+                    </TouchableOpacity>
+                  </Animated.View>
+                </ScaleInView>
               ))}
             </View>
           </Animated.View>
@@ -237,12 +255,14 @@ const OnboardingScreen = ({ navigation }) => {
           {step.features && (
             <View style={styles.featuresContainer}>
               {step.features.map((feature, idx) => (
-                <View key={idx} style={styles.featureItem}>
-                  <View style={styles.featureIcon}>
-                    <Icon name={feature.icon} size={20} color={colors.primary} />
+                <ScaleInView key={idx} delay={idx * 100}>
+                  <View style={styles.featureItem}>
+                    <View style={styles.featureIcon}>
+                      <Icon name={feature.icon} size={20} color={colors.primary} />
+                    </View>
+                    <Text style={styles.featureText}>{feature.text}</Text>
                   </View>
-                  <Text style={styles.featureText}>{feature.text}</Text>
-                </View>
+                </ScaleInView>
               ))}
             </View>
           )}

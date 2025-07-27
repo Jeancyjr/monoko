@@ -3,6 +3,8 @@ import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { useSelector } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import AnimatedStatCard from '../components/AnimatedStatCard';
+import { FadeInView, SlideInView, ScaleInView } from '../components/AnimatedComponents';
 
 const ProgressScreen = () => {
   const { streak, totalXP, selectedLanguage } = useSelector(state => state.user);
@@ -23,41 +25,42 @@ const ProgressScreen = () => {
       
       <ScrollView style={styles.content}>
         <View style={styles.statsGrid}>
-          <View style={styles.statCard}>
-            <Icon name="local-fire-department" size={32} color={colors.warning} />
-            <Text style={styles.statNumber}>{streak}</Text>
-            <Text style={styles.statLabel}>Day Streak</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Icon name="stars" size={32} color={colors.primary} />
-            <Text style={styles.statNumber}>{totalXP}</Text>
-            <Text style={styles.statLabel}>Total XP</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Icon name="trending-up" size={32} color={colors.secondary} />
-            <Text style={styles.statNumber}>{currentLevel}</Text>
-            <Text style={styles.statLabel}>Level</Text>
-          </View>
-          <View style={styles.statCard}>
-            <Icon name="school" size={32} color={colors.accent} />
-            <Text style={styles.statNumber}>{completedLessons.length}</Text>
-            <Text style={styles.statLabel}>Lessons</Text>
-          </View>
-        </View>
-
-        <View style={styles.achievementsSection}>
-          <Text style={styles.sectionTitle}>Achievements</Text>
-          {achievements.map(achievement => (
-            <View key={achievement.id} style={[styles.achievementCard, !achievement.unlocked && styles.lockedAchievement]}>
-              <Icon name={achievement.icon} size={24} color={achievement.unlocked ? colors.primary : colors.lightGray} />
-              <View style={styles.achievementText}>
-                <Text style={[styles.achievementTitle, !achievement.unlocked && styles.lockedText]}>{achievement.title}</Text>
-                <Text style={[styles.achievementDesc, !achievement.unlocked && styles.lockedText]}>{achievement.description}</Text>
-              </View>
-              {achievement.unlocked && <Icon name="check-circle" size={20} color={colors.success} />}
-            </View>
+          {[
+            { icon: 'local-fire-department', value: streak, label: 'Day Streak', color: colors.warning },
+            { icon: 'stars', value: totalXP, label: 'Total XP', color: colors.primary },
+            { icon: 'trending-up', value: currentLevel, label: 'Level', color: colors.secondary },
+            { icon: 'school', value: completedLessons.length, label: 'Lessons', color: colors.accent },
+          ].map((stat, index) => (
+            <AnimatedStatCard 
+              key={stat.label}
+              icon={stat.icon}
+              value={stat.value}
+              label={stat.label}
+              color={stat.color}
+              delay={index * 150}
+            />
           ))}
         </View>
+
+        <SlideInView delay={600} style={styles.achievementsSection}>
+          <Text style={styles.sectionTitle}>Achievements</Text>
+          {achievements.map((achievement, index) => (
+            <ScaleInView key={achievement.id} delay={700 + index * 100}>
+              <View style={[styles.achievementCard, !achievement.unlocked && styles.lockedAchievement]}>
+                <Icon name={achievement.icon} size={24} color={achievement.unlocked ? colors.primary : colors.lightGray} />
+                <View style={styles.achievementText}>
+                  <Text style={[styles.achievementTitle, !achievement.unlocked && styles.lockedText]}>{achievement.title}</Text>
+                  <Text style={[styles.achievementDesc, !achievement.unlocked && styles.lockedText]}>{achievement.description}</Text>
+                </View>
+                {achievement.unlocked && (
+                  <ScaleInView delay={100}>
+                    <Icon name="check-circle" size={20} color={colors.success} />
+                  </ScaleInView>
+                )}
+              </View>
+            </ScaleInView>
+          ))}
+        </SlideInView>
       </ScrollView>
     </View>
   );
@@ -70,7 +73,7 @@ const styles = StyleSheet.create({
   headerSubtitle: { fontSize: fonts.md, fontFamily: fonts.regular, color: colors.white, opacity: 0.9, marginTop: spacing.xs },
   content: { flex: 1, padding: spacing.lg },
   statsGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.md, marginBottom: spacing.xl },
-  statCard: { flex: 1, minWidth: '45%', backgroundColor: colors.white, padding: spacing.md, borderRadius: borderRadius.md, alignItems: 'center', ...shadows.small },
+  statCard: { flex: 1, minWidth: '45%', backgroundColor: colors.white, padding: spacing.md, borderRadius: borderRadius.lg, alignItems: 'center', ...shadows.medium },
   statNumber: { fontSize: fonts.xl, fontFamily: fonts.bold, color: colors.black, marginTop: spacing.xs },
   statLabel: { fontSize: fonts.xs, fontFamily: fonts.regular, color: colors.gray, marginTop: spacing.xs },
   achievementsSection: { marginBottom: spacing.xl },
