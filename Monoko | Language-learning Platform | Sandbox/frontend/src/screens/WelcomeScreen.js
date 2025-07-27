@@ -11,6 +11,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors, fonts, spacing, borderRadius } from '../theme';
+import { GuideCharacter, LanguageCharacter } from '../components/AfricanCharacters';
 
 const { width, height } = Dimensions.get('window');
 
@@ -35,9 +36,9 @@ const WelcomeScreen = ({ navigation }) => {
   }, []);
 
   const languages = [
-    { name: 'Swahili', flag: '🇰🇪', speakers: '200M+', color: colors.swahili },
-    { name: 'Lingala', flag: '🇨🇩', speakers: '70M+', color: colors.lingala },
-    { name: 'Amharic', flag: '🇪🇹', speakers: '57M+', color: colors.amharic },
+    { name: 'Swahili', character: <LanguageCharacter language="sw" size={32} />, speakers: '200M+', color: colors.swahili },
+    { name: 'Lingala', character: <LanguageCharacter language="ln" size={32} />, speakers: '70M+', color: colors.lingala },
+    { name: 'Amharic', character: <LanguageCharacter language="am" size={32} />, speakers: '57M+', color: colors.amharic },
   ];
 
   return (
@@ -60,9 +61,13 @@ const WelcomeScreen = ({ navigation }) => {
             {/* Logo/Title Section */}
             <View style={styles.header}>
               <View style={styles.logoContainer}>
-                <Text style={styles.logo}>
-                  M<Text style={styles.logoIcon}>💬</Text>noko
-                </Text>
+                <View style={styles.logoRow}>
+                  <Text style={styles.logo}>M</Text>
+                  <View style={styles.logoIcon}>
+                    <GuideCharacter type="welcome" size={44} color={colors.primaryLight} />
+                  </View>
+                  <Text style={styles.logo}>noko</Text>
+                </View>
               </View>
               <Text style={styles.tagline}>Speak the Heart of Africa</Text>
               <Text style={styles.subtitle}>
@@ -82,7 +87,7 @@ const WelcomeScreen = ({ navigation }) => {
                   ]}
                 >
                   <View style={styles.languageInfo}>
-                    <Text style={styles.languageFlag}>{language.flag}</Text>
+                    <View style={styles.languageFlag}>{language.character}</View>
                     <View style={styles.languageText}>
                       <Text style={styles.languageName}>{language.name}</Text>
                       <Text style={styles.languageSpeakers}>
@@ -165,15 +170,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginBottom: spacing.xl,
   },
+  logoRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   logo: {
     fontSize: 56,
     fontFamily: fonts.bold,
     color: colors.white,
-    textAlign: 'center',
     letterSpacing: -2,
   },
   logoIcon: {
-    fontSize: 44,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: spacing.xs,
   },
   tagline: {
     fontSize: fonts.lg,
@@ -216,7 +227,8 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   languageFlag: {
-    fontSize: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: spacing.md,
   },
   languageText: {
