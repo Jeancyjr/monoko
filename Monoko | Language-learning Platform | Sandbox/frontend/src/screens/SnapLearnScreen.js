@@ -380,8 +380,8 @@ const styles = StyleSheet.create({
   },
   scanFrame: {
     alignSelf: 'center',
-    width: width * 0.7,
-    height: width * 0.7,
+    width: screenDimensions.width * 0.7,
+    height: screenDimensions.width * 0.7,
     position: 'relative',
   },
   corner: {
