@@ -6,17 +6,22 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
-  Dimensions,
   Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import MonokoLogo from '../components/MonokoLogo';
 import { AchievementMascot } from '../components/AfricanCharacters';
-
-const { width } = Dimensions.get('window');
+import { 
+  responsive, 
+  getIconSize,
+  getCharacterSize,
+  getValueForDevice,
+  getGridColumns,
+  getModalDimensions 
+} from '../utils/responsive';
 
 const AchievementsScreen = ({ navigation }) => {
   const { totalXP, completedLessons, streak } = useSelector(state => state.user);
@@ -705,9 +710,15 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.xl,
-    padding: spacing.xl,
+    padding: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
     alignItems: 'center',
-    maxWidth: width * 0.9,
+    maxWidth: getModalDimensions().width,
+    maxHeight: getModalDimensions().maxHeight,
     borderWidth: 3,
   },
   closeButton: {
@@ -717,9 +728,24 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
   },
   modalIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: getValueForDevice({
+      'small-phone': 64,
+      'medium-phone': 80,
+      'large-phone': 80,
+      'tablet': 96,
+    }),
+    height: getValueForDevice({
+      'small-phone': 64,
+      'medium-phone': 80,
+      'large-phone': 80,
+      'tablet': 96,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 32,
+      'medium-phone': 40,
+      'large-phone': 40,
+      'tablet': 48,
+    }),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.lg,

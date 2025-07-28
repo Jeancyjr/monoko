@@ -5,17 +5,20 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Dimensions,
   Animated,
   Alert,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import { addXP, completeLesson } from '../store/store';
 import { GuideCharacter } from '../components/AfricanCharacters';
-
-const { width } = Dimensions.get('window');
+import { 
+  responsive, 
+  getIconSize,
+  getCharacterSize,
+  getValueForDevice 
+} from '../utils/responsive';
 
 const LessonPlayerScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();

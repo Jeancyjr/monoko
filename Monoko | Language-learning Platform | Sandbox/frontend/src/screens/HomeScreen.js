@@ -5,18 +5,23 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
   Animated,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors, fonts, spacing, borderRadius } from '../theme';
+import { colors, fonts, spacing, borderRadius, screenDimensions } from '../theme';
 import { setSelectedLanguage } from '../store/store';
 import MonokoLogo from '../components/MonokoLogo';
 import { FadeInView, ScaleInView, SlideInView, StaggeredList } from '../components/AnimatedComponents';
 import { LanguageCharacter, GuideCharacter } from '../components/AfricanCharacters';
-
-const { width } = Dimensions.get('window');
+import { 
+  responsive, 
+  getCardDimensions, 
+  getIconSize, 
+  getCharacterSize,
+  getValueForDevice,
+  getGridColumns 
+} from '../utils/responsive';
 
 const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -75,9 +80,9 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   const languages = [
-    { code: 'sw', name: 'Swahili', character: <LanguageCharacter language="sw" size={32} />, color: colors.swahili },
-    { code: 'ln', name: 'Lingala', character: <LanguageCharacter language="ln" size={32} />, color: colors.lingala },
-    { code: 'am', name: 'Amharic', character: <LanguageCharacter language="am" size={32} />, color: colors.amharic },
+    { code: 'sw', name: 'Swahili', character: <LanguageCharacter language="sw" size={getCharacterSize(32)} />, color: colors.swahili },
+    { code: 'ln', name: 'Lingala', character: <LanguageCharacter language="ln" size={getCharacterSize(32)} />, color: colors.lingala },
+    { code: 'am', name: 'Amharic', character: <LanguageCharacter language="am" size={getCharacterSize(32)} />, color: colors.amharic },
   ];
 
   return (
@@ -100,7 +105,7 @@ const HomeScreen = ({ navigation }) => {
           </View>
         </View>
         <TouchableOpacity style={styles.profileButton}>
-          <Icon name="person" size={24} color={colors.white} />
+          <Icon name="person" size={getIconSize(24)} color={colors.white} />
         </TouchableOpacity>
       </View>
 
@@ -112,7 +117,7 @@ const HomeScreen = ({ navigation }) => {
         ].map((stat, index) => (
           <ScaleInView key={stat.label} delay={index * 100} style={styles.statCard}>
             <View style={[styles.iconContainer, { backgroundColor: `${stat.color}20` }]}>
-              <Icon name={stat.icon} size={24} color={stat.color} />
+              <Icon name={stat.icon} size={getIconSize(24)} color={stat.color} />
             </View>
             <Text style={styles.statNumber}>{stat.value}</Text>
             <Text style={styles.statLabel}>{stat.label}</Text>
@@ -156,7 +161,7 @@ const HomeScreen = ({ navigation }) => {
                 activeOpacity={0.7}
               >
                 <View style={[styles.actionIcon, { backgroundColor: `${action.color}20` }]}>
-                  <Icon name={action.icon} size={24} color={action.color} />
+                  <Icon name={action.icon} size={getIconSize(24)} color={action.color} />
                 </View>
                 <Text style={styles.actionTitle}>{action.title}</Text>
                 <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
@@ -172,7 +177,7 @@ const HomeScreen = ({ navigation }) => {
             <Text style={styles.sectionTitle}>Daily Goal</Text>
             {dailyGoalMet && (
               <ScaleInView delay={0}>
-                <Icon name="check-circle" size={24} color={colors.success} />
+                <Icon name="check-circle" size={getIconSize(24)} color={colors.success} />
               </ScaleInView>
             )}
           </View>
@@ -195,7 +200,7 @@ const HomeScreen = ({ navigation }) => {
       <SlideInView delay={900} direction="up" style={styles.section}>
         <View style={styles.culturalTipCard}>
           <ScaleInView delay={100}>
-            <Icon name="lightbulb" size={24} color={colors.primary} />
+            <Icon name="lightbulb" size={getIconSize(24)} color={colors.primary} />
           </ScaleInView>
           <View style={styles.tipContent}>
             <FadeInView delay={200}>
@@ -222,8 +227,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     backgroundColor: colors.primary,
-    padding: spacing.lg,
-    paddingTop: spacing.xl + 24, // Account for status bar
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
+    paddingTop: getValueForDevice({
+      'small-phone': spacing.xl + 20,
+      'medium-phone': spacing.xl + 24,
+      'large-phone': spacing.xl + 24,
+      'tablet': spacing.xl + 32,
+    }),
   },
   headerLeft: {
     flex: 1,
@@ -267,30 +282,71 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   profileButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 44,
+      'large-phone': 44,
+      'tablet': 52,
+    }),
+    height: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 44,
+      'large-phone': 44,
+      'tablet': 52,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 20,
+      'medium-phone': 22,
+      'large-phone': 22,
+      'tablet': 26,
+    }),
     backgroundColor: colors.primaryDark,
     alignItems: 'center',
     justifyContent: 'center',
   },
   statsContainer: {
-    flexDirection: 'row',
-    padding: spacing.lg,
+    flexDirection: responsive.isSmallPhone ? 'column' : 'row',
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
     gap: spacing.md,
   },
   statCard: {
-    flex: 1,
+    flex: responsive.isSmallPhone ? 0 : 1,
     backgroundColor: colors.white,
-    padding: spacing.md,
+    padding: getValueForDevice({
+      'small-phone': spacing.sm,
+      'medium-phone': spacing.md,
+      'large-phone': spacing.md,
+      'tablet': spacing.lg,
+    }),
     borderRadius: borderRadius.lg,
     alignItems: 'center',
+    marginBottom: responsive.isSmallPhone ? spacing.sm : 0,
     ...require('../theme').shadows.medium,
   },
   iconContainer: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 48,
+      'large-phone': 48,
+      'tablet': 56,
+    }),
+    height: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 48,
+      'large-phone': 48,
+      'tablet': 56,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 20,
+      'medium-phone': 24,
+      'large-phone': 24,
+      'tablet': 28,
+    }),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.sm,
@@ -308,7 +364,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   section: {
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
     marginBottom: spacing.lg,
   },
   sectionTitle: {
@@ -319,11 +380,21 @@ const styles = StyleSheet.create({
   },
   languageCard: {
     backgroundColor: colors.white,
-    padding: spacing.md,
+    padding: getValueForDevice({
+      'small-phone': spacing.sm,
+      'medium-phone': spacing.md,
+      'large-phone': spacing.md,
+      'tablet': spacing.lg,
+    }),
     marginRight: spacing.sm,
     borderRadius: borderRadius.md,
     alignItems: 'center',
-    minWidth: 100,
+    minWidth: getValueForDevice({
+      'small-phone': 80,
+      'medium-phone': 100,
+      'large-phone': 100,
+      'tablet': 120,
+    }),
     borderWidth: 2,
     borderColor: 'transparent',
   },
@@ -344,19 +415,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.md,
+    justifyContent: responsive.isTablet ? 'space-between' : 'flex-start',
   },
   actionCard: {
-    width: (width - spacing.lg * 2 - spacing.md) / 2,
+    width: responsive.isTablet ? getCardDimensions().width : (screenDimensions.width - getValueForDevice({
+      'small-phone': spacing.md * 2,
+      'medium-phone': spacing.lg * 2,
+      'large-phone': spacing.lg * 2,
+      'tablet': spacing.xl * 2,
+    }) - spacing.md) / 2,
     backgroundColor: colors.white,
-    padding: spacing.md,
+    padding: getValueForDevice({
+      'small-phone': spacing.sm,
+      'medium-phone': spacing.md,
+      'large-phone': spacing.md,
+      'tablet': spacing.lg,
+    }),
     borderRadius: borderRadius.md,
     alignItems: 'center',
     ...require('../theme').shadows.small,
   },
   actionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 48,
+      'large-phone': 48,
+      'tablet': 56,
+    }),
+    height: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 48,
+      'large-phone': 48,
+      'tablet': 56,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 20,
+      'medium-phone': 24,
+      'large-phone': 24,
+      'tablet': 28,
+    }),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.sm,

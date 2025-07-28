@@ -5,15 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  Dimensions,
   Alert,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import { addXP, updateStreak } from '../store/store';
-
-const { width } = Dimensions.get('window');
+import { 
+  responsive, 
+  getIconSize,
+  getValueForDevice 
+} from '../utils/responsive';
 
 const EchoMeGameScreen = ({ navigation }) => {
   const dispatch = useDispatch();

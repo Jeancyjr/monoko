@@ -6,14 +6,17 @@ import {
   TouchableOpacity,
   ImageBackground,
   Animated,
-  Dimensions,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors, fonts, spacing, borderRadius } from '../theme';
+import { colors, fonts, spacing, borderRadius, screenDimensions } from '../theme';
 import { GuideCharacter, LanguageCharacter } from '../components/AfricanCharacters';
-
-const { width, height } = Dimensions.get('window');
+import { 
+  responsive, 
+  getIconSize,
+  getCharacterSize,
+  getValueForDevice 
+} from '../utils/responsive';
 
 const WelcomeScreen = ({ navigation }) => {
   const [fadeAnim] = useState(new Animated.Value(0));
@@ -36,9 +39,9 @@ const WelcomeScreen = ({ navigation }) => {
   }, []);
 
   const languages = [
-    { name: 'Swahili', character: <LanguageCharacter language="sw" size={32} />, speakers: '200M+', color: colors.swahili },
-    { name: 'Lingala', character: <LanguageCharacter language="ln" size={32} />, speakers: '70M+', color: colors.lingala },
-    { name: 'Amharic', character: <LanguageCharacter language="am" size={32} />, speakers: '57M+', color: colors.amharic },
+    { name: 'Swahili', character: <LanguageCharacter language="sw" size={getCharacterSize(32)} />, speakers: '200M+', color: colors.swahili },
+    { name: 'Lingala', character: <LanguageCharacter language="ln" size={getCharacterSize(32)} />, speakers: '70M+', color: colors.lingala },
+    { name: 'Amharic', character: <LanguageCharacter language="am" size={getCharacterSize(32)} />, speakers: '57M+', color: colors.amharic },
   ];
 
   return (
@@ -64,7 +67,7 @@ const WelcomeScreen = ({ navigation }) => {
                 <View style={styles.logoRow}>
                   <Text style={styles.logo}>M</Text>
                   <View style={styles.logoIcon}>
-                    <GuideCharacter type="welcome" size={44} color={colors.primaryLight} />
+                    <GuideCharacter type="welcome" size={getCharacterSize(44)} color={colors.primaryLight} />
                   </View>
                   <Text style={styles.logo}>noko</Text>
                 </View>
@@ -168,7 +171,12 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: 'center',
-    marginBottom: spacing.xl,
+    marginBottom: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
   },
   logoRow: {
     flexDirection: 'row',
@@ -176,7 +184,12 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   logo: {
-    fontSize: 56,
+    fontSize: getValueForDevice({
+      'small-phone': fonts.xxxl * 1.5,
+      'medium-phone': fonts.xxxl * 1.75,
+      'large-phone': fonts.xxxl * 1.75,
+      'tablet': fonts.xxxl * 2,
+    }),
     fontFamily: fonts.bold,
     color: colors.white,
     letterSpacing: -2,
@@ -229,10 +242,12 @@ const styles = StyleSheet.create({
   languageFlag: {
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.md,
+    marginRight: responsive.isSmallPhone ? 0 : spacing.md,
+    marginBottom: responsive.isSmallPhone ? spacing.xs : 0,
   },
   languageText: {
     flex: 1,
+    alignItems: responsive.isSmallPhone ? 'center' : 'flex-start',
   },
   languageName: {
     fontSize: fonts.lg,

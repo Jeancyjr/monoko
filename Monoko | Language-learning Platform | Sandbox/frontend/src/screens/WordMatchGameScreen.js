@@ -5,15 +5,17 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  Dimensions,
   Alert,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import { addXP, updateStreak } from '../store/store';
-
-const { width } = Dimensions.get('window');
+import { 
+  responsive, 
+  getIconSize,
+  getValueForDevice 
+} from '../utils/responsive';
 
 const WordMatchGameScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -422,12 +424,22 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
   },
   gameCard: {
-    width: (width - spacing.lg * 2 - spacing.md) / 2,
+    width: (screenDimensions.width - getValueForDevice({
+      'small-phone': spacing.md * 2,
+      'medium-phone': spacing.lg * 2,
+      'large-phone': spacing.lg * 2,
+      'tablet': spacing.xl * 2,
+    }) - spacing.md) / 2,
     aspectRatio: 1.5,
     borderRadius: borderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: spacing.md,
+    padding: getValueForDevice({
+      'small-phone': spacing.sm,
+      'medium-phone': spacing.md,
+      'large-phone': spacing.md,
+      'tablet': spacing.lg,
+    }),
     marginBottom: spacing.md,
     ...shadows.small,
     borderWidth: 2,

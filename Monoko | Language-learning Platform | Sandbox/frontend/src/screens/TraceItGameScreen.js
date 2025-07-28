@@ -5,17 +5,19 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  Dimensions,
   Alert,
   PanResponder,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import Svg, { Path, Circle } from 'react-native-svg';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import { addXP, updateStreak } from '../store/store';
-
-const { width, height } = Dimensions.get('window');
+import { 
+  responsive, 
+  getIconSize,
+  getValueForDevice 
+} from '../utils/responsive';
 
 const TraceItGameScreen = ({ navigation }) => {
   const dispatch = useDispatch();

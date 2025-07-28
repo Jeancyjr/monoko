@@ -5,17 +5,20 @@ import {
   StyleSheet,
   TouchableOpacity,
   Animated,
-  Dimensions,
   Alert,
   Image,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import { addXP, updateStreak } from '../store/store';
 import { AchievementMascot } from '../components/AfricanCharacters';
-
-const { width } = Dimensions.get('window');
+import { 
+  responsive, 
+  getIconSize,
+  getCharacterSize,
+  getValueForDevice 
+} from '../utils/responsive';
 
 const MemoryCardsGameScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -330,8 +333,18 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: colors.primary,
-    padding: spacing.lg,
-    paddingTop: spacing.xl,
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
+    paddingTop: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -422,11 +435,21 @@ const styles = StyleSheet.create({
   cardsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    justifyContent: 'space-between',
-    gap: spacing.sm,
+    justifyContent: responsive.isTablet ? 'flex-start' : 'space-between',
+    gap: getValueForDevice({
+      'small-phone': spacing.xs,
+      'medium-phone': spacing.sm,
+      'large-phone': spacing.sm,
+      'tablet': spacing.md,
+    }),
   },
   card: {
-    width: (width - spacing.lg * 2 - spacing.sm * 2) / 3,
+    width: (screenDimensions.width - getValueForDevice({
+      'small-phone': spacing.md * 2,
+      'medium-phone': spacing.lg * 2,
+      'large-phone': spacing.lg * 2,
+      'tablet': spacing.xl * 2,
+    }) - spacing.sm * 2) / 3,
     aspectRatio: 0.8,
     borderRadius: borderRadius.md,
     justifyContent: 'center',

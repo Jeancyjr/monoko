@@ -5,7 +5,6 @@ import {
   StyleSheet,
   TouchableOpacity,
   Alert,
-  Dimensions,
   ScrollView,
   Modal,
   Image,
@@ -19,10 +18,14 @@ import * as MediaLibrary from 'expo-media-library';
 import { Audio } from 'expo-av';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector, useDispatch } from 'react-redux';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import { addScannedWord, addToWordBank } from '../store/store';
-
-const { width, height } = Dimensions.get('window');
+import { 
+  responsive, 
+  getIconSize,
+  getValueForDevice,
+  getModalDimensions 
+} from '../utils/responsive';
 
 const SnapLearnScreen = ({ navigation }) => {
   const dispatch = useDispatch();
