@@ -5,16 +5,20 @@ import {
   StyleSheet,
   TouchableOpacity,
   ScrollView,
-  Dimensions,
   Animated,
   Alert,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import { addXP, completeLesson } from '../store/store';
-
-const { width } = Dimensions.get('window');
+import { GuideCharacter } from '../components/AfricanCharacters';
+import { 
+  responsive, 
+  getIconSize,
+  getCharacterSize,
+  getValueForDevice 
+} from '../utils/responsive';
 
 const LessonPlayerScreen = ({ navigation, route }) => {
   const dispatch = useDispatch();
@@ -156,7 +160,9 @@ const LessonPlayerScreen = ({ navigation, route }) => {
 
   const renderIntroduction = () => (
     <View style={styles.stepContainer}>
-      <Text style={styles.stepEmoji}>{currentStepData.image}</Text>
+      <View style={styles.stepEmoji}>
+        <GuideCharacter type="lesson" size={64} color={colors.primary} />
+      </View>
       <Text style={styles.stepTitle}>{currentStepData.title}</Text>
       <Text style={styles.stepContent}>{currentStepData.content}</Text>
       
@@ -381,7 +387,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   stepEmoji: {
-    fontSize: 64,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.lg,
   },
   stepTitle: {

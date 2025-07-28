@@ -9,6 +9,7 @@ const userSlice = createSlice({
     selectedLanguage: null,
     streak: 0,
     totalXP: 0,
+    onboardingComplete: false,
   },
   reducers: {
     setUser: (state, action) => {
@@ -24,10 +25,14 @@ const userSlice = createSlice({
     addXP: (state, action) => {
       state.totalXP += action.payload;
     },
+    setOnboardingComplete: (state, action) => {
+      state.onboardingComplete = action.payload;
+    },
     logout: (state) => {
       state.profile = null;
       state.isAuthenticated = false;
       state.selectedLanguage = null;
+      state.onboardingComplete = false;
     },
   },
 });
@@ -88,10 +93,38 @@ const lessonsSlice = createSlice({
   },
 });
 
+const snapLearnSlice = createSlice({
+  name: 'snapLearn',
+  initialState: {
+    wordBank: [],
+    recentScans: [],
+    scanHistory: [],
+  },
+  reducers: {
+    addScannedWord: (state, action) => {
+      state.recentScans.unshift(action.payload);
+      state.scanHistory.push(action.payload);
+      if (state.recentScans.length > 10) {
+        state.recentScans.pop();
+      }
+    },
+    addToWordBank: (state, action) => {
+      const word = action.payload;
+      if (!state.wordBank.find(w => w.object === word.object)) {
+        state.wordBank.push(word);
+      }
+    },
+    clearRecentScans: (state) => {
+      state.recentScans = [];
+    },
+  },
+});
+
 // Export actions
-export const { setUser, setSelectedLanguage, updateStreak, addXP, logout } = userSlice.actions;
+export const { setUser, setSelectedLanguage, updateStreak, addXP, setOnboardingComplete, logout } = userSlice.actions;
 export const { completeLesson, setDailyGoalMet, addAchievement, updateLevel } = progressSlice.actions;
 export const { setLessons, setCurrentLesson, toggleFavorite } = lessonsSlice.actions;
+export const { addScannedWord, addToWordBank, clearRecentScans } = snapLearnSlice.actions;
 
 // Configure store
 export const store = configureStore({
@@ -99,5 +132,6 @@ export const store = configureStore({
     user: userSlice.reducer,
     progress: progressSlice.reducer,
     lessons: lessonsSlice.reducer,
+    snapLearn: snapLearnSlice.reducer,
   },
 });

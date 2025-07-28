@@ -5,12 +5,14 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
-
-const { width } = Dimensions.get('window');
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
+import { 
+  responsive, 
+  getIconSize,
+  getValueForDevice 
+} from '../utils/responsive';
 
 const GamesScreen = ({ navigation }) => {
   const games = [
@@ -64,7 +66,7 @@ const GamesScreen = ({ navigation }) => {
       activeOpacity={0.8}
     >
       <View style={[styles.gameIcon, { backgroundColor: `${game.color}20` }]}>
-        <Icon name={game.icon} size={32} color={game.color} />
+        <Icon name={game.icon} size={getIconSize(32)} color={game.color} />
       </View>
       
       <View style={styles.gameContent}>
@@ -73,11 +75,11 @@ const GamesScreen = ({ navigation }) => {
         
         <View style={styles.gameStats}>
           <View style={styles.statItem}>
-            <Icon name="schedule" size={14} color={colors.gray} />
+            <Icon name="schedule" size={getIconSize(14)} color={colors.gray} />
             <Text style={styles.statText}>{game.playTime}</Text>
           </View>
           <View style={styles.statItem}>
-            <Icon name="stars" size={14} color={colors.primary} />
+            <Icon name="stars" size={getIconSize(14)} color={colors.primary} />
             <Text style={styles.statText}>{game.xpReward} XP</Text>
           </View>
           <View style={[styles.difficultyBadge, { backgroundColor: getDifficultyColor(game.difficulty) }]}>
@@ -86,7 +88,7 @@ const GamesScreen = ({ navigation }) => {
         </View>
       </View>
       
-      <Icon name="play-arrow" size={24} color={game.color} />
+      <Icon name="play-arrow" size={getIconSize(24)} color={game.color} />
     </TouchableOpacity>
   );
 
@@ -105,16 +107,13 @@ const GamesScreen = ({ navigation }) => {
         navigation.navigate('WordMatchGame');
         break;
       case 'echo-me':
-        // TODO: Navigate to Echo Me game
-        console.log('Echo Me game - coming soon!');
+        navigation.navigate('EchoMeGame');
         break;
       case 'memory-cards':
-        // TODO: Navigate to Memory Cards game
-        console.log('Memory Cards game - coming soon!');
+        navigation.navigate('MemoryCardsGame');
         break;
       case 'trace-it':
-        // TODO: Navigate to Trace It game
-        console.log('Trace It game - coming soon!');
+        navigation.navigate('TraceItGame');
         break;
       default:
         console.log('Game not implemented yet:', game.title);
@@ -150,8 +149,18 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: colors.accent,
-    padding: spacing.lg,
-    paddingTop: spacing.xl,
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
+    paddingTop: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
   },
   headerTitle: {
     fontSize: fonts.xxl,
@@ -167,33 +176,67 @@ const styles = StyleSheet.create({
   },
   gamesContainer: {
     flex: 1,
-    padding: spacing.lg,
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
   },
   gameCard: {
-    flexDirection: 'row',
+    flexDirection: responsive.isSmallPhone ? 'column' : 'row',
     alignItems: 'center',
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    padding: spacing.md,
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
     marginBottom: spacing.md,
+    minHeight: getValueForDevice({
+      'small-phone': 140,
+      'medium-phone': 100,
+      'large-phone': 100,
+      'tablet': 120,
+    }),
     ...shadows.medium,
   },
   gameIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: getValueForDevice({
+      'small-phone': 50,
+      'medium-phone': 60,
+      'large-phone': 60,
+      'tablet': 72,
+    }),
+    height: getValueForDevice({
+      'small-phone': 50,
+      'medium-phone': 60,
+      'large-phone': 60,
+      'tablet': 72,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 25,
+      'medium-phone': 30,
+      'large-phone': 30,
+      'tablet': 36,
+    }),
     alignItems: 'center',
     justifyContent: 'center',
-    marginRight: spacing.md,
+    marginRight: responsive.isSmallPhone ? 0 : spacing.md,
+    marginBottom: responsive.isSmallPhone ? spacing.sm : 0,
   },
   gameContent: {
     flex: 1,
+    alignItems: responsive.isSmallPhone ? 'center' : 'flex-start',
   },
   gameTitle: {
     fontSize: fonts.lg,
     fontFamily: fonts.bold,
     color: colors.black,
     marginBottom: spacing.xs,
+    textAlign: responsive.isSmallPhone ? 'center' : 'left',
   },
   gameDescription: {
     fontSize: fonts.sm,
@@ -201,11 +244,12 @@ const styles = StyleSheet.create({
     color: colors.gray,
     marginBottom: spacing.md,
     lineHeight: fonts.lineHeights.normal * fonts.sm,
+    textAlign: responsive.isSmallPhone ? 'center' : 'left',
   },
   gameStats: {
-    flexDirection: 'row',
+    flexDirection: responsive.isSmallPhone ? 'column' : 'row',
     alignItems: 'center',
-    gap: spacing.md,
+    gap: responsive.isSmallPhone ? spacing.xs : spacing.md,
   },
   statItem: {
     flexDirection: 'row',
@@ -230,7 +274,12 @@ const styles = StyleSheet.create({
   comingSoonSection: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.lg,
-    padding: spacing.xl,
+    padding: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
     alignItems: 'center',
     marginTop: spacing.lg,
     ...shadows.small,

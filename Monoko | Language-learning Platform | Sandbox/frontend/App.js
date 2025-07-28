@@ -17,6 +17,9 @@ import SnapLearnScreen from './src/screens/SnapLearnScreen';
 import LiveSessionsScreen from './src/screens/LiveSessionsScreen';
 import ProfileScreen from './src/screens/ProfileScreen';
 import WordMatchGameScreen from './src/screens/WordMatchGameScreen';
+import EchoMeGameScreen from './src/screens/EchoMeGameScreen';
+import MemoryCardsGameScreen from './src/screens/MemoryCardsGameScreen';
+import TraceItGameScreen from './src/screens/TraceItGameScreen';
 import LessonPlayerScreen from './src/screens/LessonPlayerScreen';
 import OnboardingScreen from './src/screens/OnboardingScreen';
 import AchievementsScreen from './src/screens/AchievementsScreen';
@@ -151,6 +154,30 @@ export default function App() {
             <Stack.Screen 
               name="WordMatchGame" 
               component={WordMatchGameScreen}
+              options={{
+                headerShown: false,
+                presentation: 'modal',
+              }}
+            />
+            <Stack.Screen 
+              name="EchoMeGame" 
+              component={EchoMeGameScreen}
+              options={{
+                headerShown: false,
+                presentation: 'modal',
+              }}
+            />
+            <Stack.Screen 
+              name="MemoryCardsGame" 
+              component={MemoryCardsGameScreen}
+              options={{
+                headerShown: false,
+                presentation: 'modal',
+              }}
+            />
+            <Stack.Screen 
+              name="TraceItGame" 
+              component={TraceItGameScreen}
               options={{
                 headerShown: false,
                 presentation: 'modal',

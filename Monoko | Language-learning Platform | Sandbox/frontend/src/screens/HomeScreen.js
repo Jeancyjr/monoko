@@ -5,15 +5,23 @@ import {
   StyleSheet,
   ScrollView,
   TouchableOpacity,
-  Dimensions,
+  Animated,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
-import { colors, fonts, spacing, borderRadius } from '../theme';
+import { colors, fonts, spacing, borderRadius, screenDimensions } from '../theme';
 import { setSelectedLanguage } from '../store/store';
 import MonokoLogo from '../components/MonokoLogo';
-
-const { width } = Dimensions.get('window');
+import { FadeInView, ScaleInView, SlideInView, StaggeredList } from '../components/AnimatedComponents';
+import { LanguageCharacter, GuideCharacter } from '../components/AfricanCharacters';
+import { 
+  responsive, 
+  getCardDimensions, 
+  getIconSize, 
+  getCharacterSize,
+  getValueForDevice,
+  getGridColumns 
+} from '../utils/responsive';
 
 const HomeScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -72,9 +80,9 @@ const HomeScreen = ({ navigation }) => {
   ];
 
   const languages = [
-    { code: 'sw', name: 'Swahili', flag: '🇰🇪', color: colors.swahili },
-    { code: 'ln', name: 'Lingala', flag: '🇨🇩', color: colors.lingala },
-    { code: 'am', name: 'Amharic', flag: '🇪🇹', color: colors.amharic },
+    { code: 'sw', name: 'Swahili', character: <LanguageCharacter language="sw" size={getCharacterSize(32)} />, color: colors.swahili },
+    { code: 'ln', name: 'Lingala', character: <LanguageCharacter language="ln" size={getCharacterSize(32)} />, color: colors.lingala },
+    { code: 'am', name: 'Amharic', character: <LanguageCharacter language="am" size={getCharacterSize(32)} />, color: colors.amharic },
   ];
 
   return (
@@ -88,93 +96,98 @@ const HomeScreen = ({ navigation }) => {
             showTagline={true} 
             style={styles.logoContainer}
           />
-          <View style={styles.greetingContainer}>
-            <Text style={styles.greeting}>Jambo! 👋</Text>
+          <View style={styles.greetingWrapper}>
+            <View style={styles.greetingContainer}>
+              <GuideCharacter type="welcome" size={24} color={colors.white} />
+              <Text style={styles.greeting}>Jambo!</Text>
+            </View>
             <Text style={styles.subtitle}>Ready to learn today?</Text>
           </View>
         </View>
         <TouchableOpacity style={styles.profileButton}>
-          <Icon name="person" size={24} color={colors.white} />
+          <Icon name="person" size={getIconSize(24)} color={colors.white} />
         </TouchableOpacity>
       </View>
 
-      {/* Stats Cards */}
       <View style={styles.statsContainer}>
-        <View style={styles.statCard}>
-          <Icon name="local-fire-department" size={24} color={colors.warning} />
-          <Text style={styles.statNumber}>{streak}</Text>
-          <Text style={styles.statLabel}>Day Streak</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Icon name="stars" size={24} color={colors.primary} />
-          <Text style={styles.statNumber}>{totalXP}</Text>
-          <Text style={styles.statLabel}>Total XP</Text>
-        </View>
-        <View style={styles.statCard}>
-          <Icon name="trending-up" size={24} color={colors.secondary} />
-          <Text style={styles.statNumber}>{currentLevel}</Text>
-          <Text style={styles.statLabel}>Level</Text>
-        </View>
+        {[
+          { icon: 'local-fire-department', value: streak, label: 'Day Streak', color: colors.warning },
+          { icon: 'stars', value: totalXP, label: 'Total XP', color: colors.primary },
+          { icon: 'trending-up', value: currentLevel, label: 'Level', color: colors.secondary },
+        ].map((stat, index) => (
+          <ScaleInView key={stat.label} delay={index * 100} style={styles.statCard}>
+            <View style={[styles.iconContainer, { backgroundColor: `${stat.color}20` }]}>
+              <Icon name={stat.icon} size={getIconSize(24)} color={stat.color} />
+            </View>
+            <Text style={styles.statNumber}>{stat.value}</Text>
+            <Text style={styles.statLabel}>{stat.label}</Text>
+          </ScaleInView>
+        ))}
       </View>
 
-      {/* Language Selection */}
-      <View style={styles.section}>
+      <SlideInView delay={300} style={styles.section}>
         <Text style={styles.sectionTitle}>Choose Your Language</Text>
         <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-          {languages.map((language) => (
-            <TouchableOpacity
-              key={language.code}
-              style={[
-                styles.languageCard,
-                selectedLanguage === language.code && styles.selectedLanguageCard
-              ]}
-              onPress={() => dispatch(setSelectedLanguage(language.code))}
-            >
-              <Text style={styles.languageFlag}>{language.flag}</Text>
-              <Text style={styles.languageName}>{language.name}</Text>
-              {selectedLanguage === language.code && (
-                <Icon name="check-circle" size={16} color={language.color} />
-              )}
-            </TouchableOpacity>
+          {languages.map((language, index) => (
+            <FadeInView key={language.code} delay={400 + index * 100}>
+              <TouchableOpacity
+                style={[
+                  styles.languageCard,
+                  selectedLanguage === language.code && styles.selectedLanguageCard
+                ]}
+                onPress={() => dispatch(setSelectedLanguage(language.code))}
+              >
+                <View style={styles.languageFlag}>{language.character}</View>
+                <Text style={styles.languageName}>{language.name}</Text>
+                {selectedLanguage === language.code && (
+                  <ScaleInView delay={0}>
+                    <Icon name="check-circle" size={16} color={language.color} />
+                  </ScaleInView>
+                )}
+              </TouchableOpacity>
+            </FadeInView>
           ))}
         </ScrollView>
-      </View>
+      </SlideInView>
 
-      {/* Quick Actions */}
-      <View style={styles.section}>
+      <SlideInView delay={500} style={styles.section}>
         <Text style={styles.sectionTitle}>Quick Actions</Text>
         <View style={styles.quickActionsGrid}>
-          {quickActions.map((action) => (
-            <TouchableOpacity
-              key={action.id}
-              style={styles.actionCard}
-              onPress={() => navigation.navigate(action.screen)}
-              activeOpacity={0.7}
-            >
-              <View style={[styles.actionIcon, { backgroundColor: `${action.color}20` }]}>
-                <Icon name={action.icon} size={24} color={action.color} />
-              </View>
-              <Text style={styles.actionTitle}>{action.title}</Text>
-              <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
-            </TouchableOpacity>
+          {quickActions.map((action, index) => (
+            <ScaleInView key={action.id} delay={600 + index * 100}>
+              <TouchableOpacity
+                style={styles.actionCard}
+                onPress={() => navigation.navigate(action.screen)}
+                activeOpacity={0.7}
+              >
+                <View style={[styles.actionIcon, { backgroundColor: `${action.color}20` }]}>
+                  <Icon name={action.icon} size={getIconSize(24)} color={action.color} />
+                </View>
+                <Text style={styles.actionTitle}>{action.title}</Text>
+                <Text style={styles.actionSubtitle}>{action.subtitle}</Text>
+              </TouchableOpacity>
+            </ScaleInView>
           ))}
         </View>
-      </View>
+      </SlideInView>
 
-      {/* Daily Goal */}
-      <View style={styles.section}>
+      <FadeInView delay={800} style={styles.section}>
         <View style={styles.goalContainer}>
           <View style={styles.goalHeader}>
             <Text style={styles.sectionTitle}>Daily Goal</Text>
             {dailyGoalMet && (
-              <Icon name="check-circle" size={24} color={colors.success} />
+              <ScaleInView delay={0}>
+                <Icon name="check-circle" size={getIconSize(24)} color={colors.success} />
+              </ScaleInView>
             )}
           </View>
           <Text style={styles.goalText}>
-            {dailyGoalMet ? 'Great job! Goal completed today! 🎉' : 'Complete 1 lesson today'}
+            {dailyGoalMet ? 'Great job! Goal completed today!' : 'Complete 1 lesson today'}
           </Text>
           <View style={styles.progressBar}>
-            <View 
+            <SlideInView 
+              direction="right"
+              delay={100}
               style={[
                 styles.progressFill, 
                 { width: dailyGoalMet ? '100%' : '60%' }
@@ -182,21 +195,24 @@ const HomeScreen = ({ navigation }) => {
             />
           </View>
         </View>
-      </View>
+      </FadeInView>
 
-      {/* Cultural Tip */}
-      <View style={styles.section}>
+      <SlideInView delay={900} direction="up" style={styles.section}>
         <View style={styles.culturalTipCard}>
-          <Icon name="lightbulb" size={24} color={colors.primary} />
+          <ScaleInView delay={100}>
+            <Icon name="lightbulb" size={getIconSize(24)} color={colors.primary} />
+          </ScaleInView>
           <View style={styles.tipContent}>
-            <Text style={styles.tipTitle}>Cultural Tip</Text>
-            <Text style={styles.tipText}>
-              In Swahili culture, greeting is very important. "Jambo" is casual, 
-              while "Habari yako?" shows more respect and interest in someone's well-being.
-            </Text>
+            <FadeInView delay={200}>
+              <Text style={styles.tipTitle}>Cultural Tip</Text>
+              <Text style={styles.tipText}>
+                In Swahili culture, greeting is very important. "Jambo" is casual, 
+                while "Habari yako?" shows more respect and interest in someone's well-being.
+              </Text>
+            </FadeInView>
           </View>
         </View>
-      </View>
+      </SlideInView>
     </ScrollView>
   );
 };
@@ -211,8 +227,18 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'flex-start',
     backgroundColor: colors.primary,
-    padding: spacing.lg,
-    paddingTop: spacing.xl + 24, // Account for status bar
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
+    paddingTop: getValueForDevice({
+      'small-phone': spacing.xl + 20,
+      'medium-phone': spacing.xl + 24,
+      'large-phone': spacing.xl + 24,
+      'tablet': spacing.xl + 32,
+    }),
   },
   headerLeft: {
     flex: 1,
@@ -236,8 +262,13 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
     letterSpacing: 0.5,
   },
-  greetingContainer: {
+  greetingWrapper: {
     marginTop: spacing.sm,
+  },
+  greetingContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: spacing.sm,
   },
   greeting: {
     fontSize: fonts.lg,
@@ -251,25 +282,74 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   profileButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 44,
+      'large-phone': 44,
+      'tablet': 52,
+    }),
+    height: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 44,
+      'large-phone': 44,
+      'tablet': 52,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 20,
+      'medium-phone': 22,
+      'large-phone': 22,
+      'tablet': 26,
+    }),
     backgroundColor: colors.primaryDark,
     alignItems: 'center',
     justifyContent: 'center',
   },
   statsContainer: {
-    flexDirection: 'row',
-    padding: spacing.lg,
+    flexDirection: responsive.isSmallPhone ? 'column' : 'row',
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
     gap: spacing.md,
   },
   statCard: {
-    flex: 1,
+    flex: responsive.isSmallPhone ? 0 : 1,
     backgroundColor: colors.white,
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
+    padding: getValueForDevice({
+      'small-phone': spacing.sm,
+      'medium-phone': spacing.md,
+      'large-phone': spacing.md,
+      'tablet': spacing.lg,
+    }),
+    borderRadius: borderRadius.lg,
     alignItems: 'center',
-    ...require('../theme').shadows.small,
+    marginBottom: responsive.isSmallPhone ? spacing.sm : 0,
+    ...require('../theme').shadows.medium,
+  },
+  iconContainer: {
+    width: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 48,
+      'large-phone': 48,
+      'tablet': 56,
+    }),
+    height: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 48,
+      'large-phone': 48,
+      'tablet': 56,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 20,
+      'medium-phone': 24,
+      'large-phone': 24,
+      'tablet': 28,
+    }),
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.sm,
   },
   statNumber: {
     fontSize: fonts.xl,
@@ -284,7 +364,12 @@ const styles = StyleSheet.create({
     marginTop: spacing.xs,
   },
   section: {
-    paddingHorizontal: spacing.lg,
+    paddingHorizontal: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
     marginBottom: spacing.lg,
   },
   sectionTitle: {
@@ -295,11 +380,21 @@ const styles = StyleSheet.create({
   },
   languageCard: {
     backgroundColor: colors.white,
-    padding: spacing.md,
+    padding: getValueForDevice({
+      'small-phone': spacing.sm,
+      'medium-phone': spacing.md,
+      'large-phone': spacing.md,
+      'tablet': spacing.lg,
+    }),
     marginRight: spacing.sm,
     borderRadius: borderRadius.md,
     alignItems: 'center',
-    minWidth: 100,
+    minWidth: getValueForDevice({
+      'small-phone': 80,
+      'medium-phone': 100,
+      'large-phone': 100,
+      'tablet': 120,
+    }),
     borderWidth: 2,
     borderColor: 'transparent',
   },
@@ -307,7 +402,8 @@ const styles = StyleSheet.create({
     borderColor: colors.primary,
   },
   languageFlag: {
-    fontSize: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.xs,
   },
   languageName: {
@@ -319,19 +415,45 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     flexWrap: 'wrap',
     gap: spacing.md,
+    justifyContent: responsive.isTablet ? 'space-between' : 'flex-start',
   },
   actionCard: {
-    width: (width - spacing.lg * 2 - spacing.md) / 2,
+    width: responsive.isTablet ? getCardDimensions().width : (screenDimensions.width - getValueForDevice({
+      'small-phone': spacing.md * 2,
+      'medium-phone': spacing.lg * 2,
+      'large-phone': spacing.lg * 2,
+      'tablet': spacing.xl * 2,
+    }) - spacing.md) / 2,
     backgroundColor: colors.white,
-    padding: spacing.md,
+    padding: getValueForDevice({
+      'small-phone': spacing.sm,
+      'medium-phone': spacing.md,
+      'large-phone': spacing.md,
+      'tablet': spacing.lg,
+    }),
     borderRadius: borderRadius.md,
     alignItems: 'center',
     ...require('../theme').shadows.small,
   },
   actionIcon: {
-    width: 48,
-    height: 48,
-    borderRadius: 24,
+    width: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 48,
+      'large-phone': 48,
+      'tablet': 56,
+    }),
+    height: getValueForDevice({
+      'small-phone': 40,
+      'medium-phone': 48,
+      'large-phone': 48,
+      'tablet': 56,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 20,
+      'medium-phone': 24,
+      'large-phone': 24,
+      'tablet': 28,
+    }),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.sm,

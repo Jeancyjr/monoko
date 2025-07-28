@@ -6,56 +6,59 @@ import {
   TouchableOpacity,
   Animated,
   Alert,
+  Image,
 } from 'react-native';
 import { useSelector, useDispatch } from 'react-redux';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import { addXP, updateStreak } from '../store/store';
+import { AchievementMascot } from '../components/AfricanCharacters';
 import { 
   responsive, 
   getIconSize,
+  getCharacterSize,
   getValueForDevice 
 } from '../utils/responsive';
 
-const WordMatchGameScreen = ({ navigation }) => {
+const MemoryCardsGameScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const { selectedLanguage } = useSelector(state => state.user);
   
-  const [gameWords, setGameWords] = useState([]);
-  const [selectedCards, setSelectedCards] = useState([]);
+  const [cards, setCards] = useState([]);
+  const [flippedCards, setFlippedCards] = useState([]);
   const [matchedPairs, setMatchedPairs] = useState([]);
   const [score, setScore] = useState(0);
-  const [timer, setTimer] = useState(60); // 60 seconds
-  const [gameState, setGameState] = useState('ready'); // ready, playing, paused, finished
+  const [timer, setTimer] = useState(60);
+  const [gameState, setGameState] = useState('ready');
+  const [moves, setMoves] = useState(0);
   const [animations] = useState({});
 
-  // Sample word pairs based on selected language
-  const wordDatabase = {
+  const  cardDatabase = {
     sw: [
-      { id: 1, swahili: 'Jambo', english: 'Hello', category: 'greetings' },
-      { id: 2, swahili: 'Asante', english: 'Thank you', category: 'courtesy' },
-      { id: 3, swahili: 'Mama', english: 'Mother', category: 'family' },
-      { id: 4, swahili: 'Baba', english: 'Father', category: 'family' },
-      { id: 5, swahili: 'Maji', english: 'Water', category: 'needs' },
-      { id: 6, swahili: 'Chakula', english: 'Food', category: 'needs' },
-      { id: 7, swahili: 'Nyumba', english: 'House', category: 'home' },
-      { id: 8, swahili: 'Pesa', english: 'Money', category: 'practical' },
-      { id: 9, swahili: 'Mti', english: 'Tree', category: 'nature' },
-      { id: 10, swahili: 'Mvua', english: 'Rain', category: 'weather' }
+      { id: 1, word: 'Simba', characterType: 'conversation', meaning: 'Lion', category: 'animals' },
+      { id: 2, word: 'Nyoka', characterType: 'cultural', meaning: 'Snake', category: 'animals' },
+      { id: 3, word: 'Ndege', characterType: 'vocabulary', meaning: 'Bird', category: 'animals' },
+      { id: 4, word: 'Mti', characterType: 'cultural', meaning: 'Tree', category: 'nature' },
+      { id: 5, word: 'Jua', characterType: 'streak', meaning: 'Sun', category: 'nature' },
+      { id: 6, word: 'Maji', characterType: 'vocabulary', meaning: 'Water', category: 'nature' },
+      { id: 7, word: 'Nyumba', characterType: 'first-steps', meaning: 'House', category: 'objects' },
+      { id: 8, word: 'Gari', characterType: 'vocabulary', meaning: 'Car', category: 'objects' }
     ],
     ln: [
-      { id: 1, lingala: 'Mbote', english: 'Hello', category: 'greetings' },
-      { id: 2, lingala: 'Melesi', english: 'Thank you', category: 'courtesy' },
-      { id: 3, lingala: 'Mama', english: 'Mother', category: 'family' },
-      { id: 4, lingala: 'Tata', english: 'Father', category: 'family' },
-      { id: 5, lingala: 'Mai', english: 'Water', category: 'needs' },
-      { id: 6, lingala: 'Bilei', english: 'Food', category: 'needs' }
+      { id: 1, word: 'Nkosi', characterType: 'conversation', meaning: 'Lion', category: 'animals' },
+      { id: 2, word: 'Nyoka', characterType: 'cultural', meaning: 'Snake', category: 'animals' },
+      { id: 3, word: 'Ndeke', characterType: 'vocabulary', meaning: 'Bird', category: 'animals' },
+      { id: 4, word: 'Nzete', characterType: 'cultural', meaning: 'Tree', category: 'nature' },
+      { id: 5, word: 'Moyi', characterType: 'streak', meaning: 'Sun', category: 'nature' },
+      { id: 6, word: 'Mai', characterType: 'vocabulary', meaning: 'Water', category: 'nature' }
     ],
     am: [
-      { id: 1, amharic: 'ሰላም', english: 'Hello', category: 'greetings' },
-      { id: 2, amharic: 'አመሰግናለሁ', english: 'Thank you', category: 'courtesy' },
-      { id: 3, amharic: 'እናት', english: 'Mother', category: 'family' },
-      { id: 4, amharic: 'አባት', english: 'Father', category: 'family' }
+      { id: 1, word: 'አንበሳ', characterType: 'conversation', meaning: 'Lion', category: 'animals' },
+      { id: 2, word: 'እባብ', characterType: 'cultural', meaning: 'Snake', category: 'animals' },
+      { id: 3, word: 'ወፍ', characterType: 'vocabulary', meaning: 'Bird', category: 'animals' },
+      { id: 4, word: 'ዛፍ', characterType: 'cultural', meaning: 'Tree', category: 'nature' },
+      { id: 5, word: 'ፀሐይ', characterType: 'streak', meaning: 'Sun', category: 'nature' },
+      { id: 6, word: 'ውሃ', characterType: 'vocabulary', meaning: 'Water', category: 'nature' }
     ]
   };
 
@@ -76,38 +79,37 @@ const WordMatchGameScreen = ({ navigation }) => {
   }, [gameState, timer]);
 
   const initializeGame = () => {
-    const words = wordDatabase[selectedLanguage] || wordDatabase.sw;
-    const selectedWords = words.slice(0, 6); // Use 6 pairs for this game
+    const words = cardDatabase[selectedLanguage] || cardDatabase.sw;
+    const selectedWords = words.slice(0, 6);
     
-    // Create card pairs
-    const cards = [];
+    const gameCards = [];
     selectedWords.forEach(word => {
-      const nativeKey = selectedLanguage === 'sw' ? 'swahili' : 
-                       selectedLanguage === 'ln' ? 'lingala' : 'amharic';
-      
-      cards.push({
-        id: `${word.id}_native`,
-        text: word[nativeKey],
-        type: 'native',
+      gameCards.push({
+        id: `${word.id}_word`,
+        type: 'word',
+        content: word.word,
         pairId: word.id,
+        meaning: word.meaning,
         category: word.category
       });
-      cards.push({
-        id: `${word.id}_english`,
-        text: word.english,
-        type: 'english',
+      gameCards.push({
+        id: `${word.id}_image`,
+        type: 'image',
+        content: word.characterType,
+        characterType: word.characterType,
         pairId: word.id,
+        meaning: word.meaning,
         category: word.category
       });
     });
 
-    // Shuffle cards
-    const shuffledCards = cards.sort(() => Math.random() - 0.5);
-    setGameWords(shuffledCards);
-    setSelectedCards([]);
+    const shuffledCards = gameCards.sort(() => Math.random() - 0.5);
+    setCards(shuffledCards);
+    setFlippedCards([]);
     setMatchedPairs([]);
     setScore(0);
     setTimer(60);
+    setMoves(0);
     setGameState('ready');
   };
 
@@ -115,51 +117,49 @@ const WordMatchGameScreen = ({ navigation }) => {
     setGameState('playing');
   };
 
-  const selectCard = (card) => {
-    if (gameState !== 'playing' || selectedCards.length >= 2 || 
-        selectedCards.find(c => c.id === card.id) || 
-        matchedPairs.includes(card.pairId)) {
+  const flipCard = (cardId) => {
+    if (gameState !== 'playing' || 
+        flippedCards.length >= 2 || 
+        flippedCards.includes(cardId) || 
+        matchedPairs.some(pair => pair.includes(cardId))) {
       return;
     }
 
-    const newSelected = [...selectedCards, card];
-    setSelectedCards(newSelected);
+    const newFlippedCards = [...flippedCards, cardId];
+    setFlippedCards(newFlippedCards);
+    animateCard(cardId, 'flip');
 
-    // Animate card selection
-    animateCard(card.id, 'select');
-
-    if (newSelected.length === 2) {
+    if (newFlippedCards.length === 2) {
+      setMoves(prev => prev + 1);
       setTimeout(() => {
-        checkMatch(newSelected);
-      }, 500);
+        checkMatch(newFlippedCards);
+      }, 1000);
     }
   };
 
-  const checkMatch = (selected) => {
-    const [card1, card2] = selected;
-    
+  const checkMatch = (flipped) => {
+    const [card1Id, card2Id] = flipped;
+    const card1 = cards.find(c => c.id === card1Id);
+    const card2 = cards.find(c => c.id === card2Id);
+
     if (card1.pairId === card2.pairId && card1.type !== card2.type) {
-      // Match found!
-      setMatchedPairs(prev => [...prev, card1.pairId]);
-      setScore(prev => prev + 10);
+      setMatchedPairs(prev => [...prev, flipped]);
+      setScore(prev => prev + 20);
       
-      // Animate success
-      animateCard(card1.id, 'match');
-      animateCard(card2.id, 'match');
+      animateCard(card1Id, 'match');
+      animateCard(card2Id, 'match');
       
-      // Check if game is complete
-      if (matchedPairs.length + 1 === 6) { // 6 pairs total
+      if (matchedPairs.length + 1 === 6) {
         setTimeout(() => endGame(true), 500);
       }
     } else {
-      // No match
-      animateCard(card1.id, 'nomatch');
-      animateCard(card2.id, 'nomatch');
+      animateCard(card1Id, 'nomatch');
+      animateCard(card2Id, 'nomatch');
     }
 
     setTimeout(() => {
-      setSelectedCards([]);
-    }, 1000);
+      setFlippedCards([]);
+    }, 1500);
   };
 
   const animateCard = (cardId, type) => {
@@ -170,7 +170,7 @@ const WordMatchGameScreen = ({ navigation }) => {
     const animation = animations[cardId];
     
     switch (type) {
-      case 'select':
+      case 'flip':
         Animated.spring(animation, {
           toValue: 1,
           useNativeDriver: true,
@@ -194,15 +194,16 @@ const WordMatchGameScreen = ({ navigation }) => {
   const endGame = (completed = false) => {
     setGameState('finished');
     
-    const finalScore = completed ? score + timer : score; // Bonus for time remaining
-    const xpEarned = Math.floor(finalScore / 2); // Convert score to XP
+    const bonusPoints = completed ? Math.max(0, 60 - moves) * 2 : 0;
+    const finalScore = score + bonusPoints + (completed ? timer : 0);
+    const xpEarned = Math.floor(finalScore / 2);
     
     dispatch(addXP(xpEarned));
     
     setTimeout(() => {
       Alert.alert(
-        completed ? '🎉 Congratulations!' : '⏰ Time\'s Up!',
-        `Final Score: ${finalScore}\nXP Earned: ${xpEarned}\nMatched Pairs: ${matchedPairs.length}/6`,
+        completed ? 'Memory Master!' : 'Time\'s Up!',
+        `Final Score: ${finalScore}\nXP Earned: ${xpEarned}\nMoves: ${moves}\nMatched Pairs: ${matchedPairs.length}/6`,
         [
           { text: 'Play Again', onPress: initializeGame },
           { text: 'Back to Games', onPress: () => navigation.goBack() }
@@ -212,17 +213,14 @@ const WordMatchGameScreen = ({ navigation }) => {
   };
 
   const renderCard = (card) => {
-    const isSelected = selectedCards.find(c => c.id === card.id);
-    const isMatched = matchedPairs.includes(card.pairId);
-    const isNative = card.type === 'native';
+    const isFlipped = flippedCards.includes(card.id);
+    const isMatched = matchedPairs.some(pair => pair.includes(card.id));
+    const showContent = isFlipped || isMatched;
     
     const cardStyle = [
-      styles.gameCard,
-      isSelected && styles.selectedCard,
+      styles.card,
       isMatched && styles.matchedCard,
-      { backgroundColor: isMatched ? colors.success + '20' : 
-                        isSelected ? colors.primary + '20' : 
-                        isNative ? colors.primaryLight + '10' : colors.white }
+      { backgroundColor: showContent ? colors.white : colors.primary }
     ];
 
     const transform = animations[card.id] ? [{
@@ -233,20 +231,27 @@ const WordMatchGameScreen = ({ navigation }) => {
       <TouchableOpacity
         key={card.id}
         style={cardStyle}
-        onPress={() => selectCard(card)}
+        onPress={() => flipCard(card.id)}
         disabled={gameState !== 'playing'}
         activeOpacity={0.8}
       >
-        <Animated.View style={{ transform }}>
-          <Text style={[
-            styles.cardText,
-            isNative && styles.nativeText,
-            isMatched && styles.matchedText
-          ]}>
-            {card.text}
-          </Text>
-          {isMatched && (
-            <Icon name="check-circle" size={20} color={colors.success} style={styles.checkIcon} />
+        <Animated.View style={[styles.cardContent, { transform }]}>
+          {showContent ? (
+            <>
+              {card.type === 'image' ? (
+                <View style={styles.cardCharacter}>
+                  <AchievementMascot type={card.characterType || 'vocabulary'} size={24} />
+                </View>
+              ) : (
+                <Text style={styles.cardWord}>{card.content}</Text>
+              )}
+              <Text style={styles.cardMeaning}>{card.meaning}</Text>
+              {isMatched && (
+                <Icon name="check-circle" size={20} color={colors.success} style={styles.checkIcon} />
+              )}
+            </>
+          ) : (
+            <Icon name="help-outline" size={32} color={colors.white} />
           )}
         </Animated.View>
       </TouchableOpacity>
@@ -260,18 +265,16 @@ const WordMatchGameScreen = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Icon name="arrow-back" size={24} color={colors.white} />
         </TouchableOpacity>
-        <Text style={styles.title}>Word Match Blitz</Text>
+        <Text style={styles.title}>Memory Cards</Text>
         <View style={styles.headerRight}>
           <Text style={styles.languageText}>{getLanguageName()}</Text>
         </View>
       </View>
 
-      {/* Game Stats */}
       <View style={styles.statsContainer}>
         <View style={styles.statItem}>
           <Text style={styles.statLabel}>Score</Text>
@@ -284,18 +287,21 @@ const WordMatchGameScreen = ({ navigation }) => {
           </Text>
         </View>
         <View style={styles.statItem}>
+          <Text style={styles.statLabel}>Moves</Text>
+          <Text style={styles.statValue}>{moves}</Text>
+        </View>
+        <View style={styles.statItem}>
           <Text style={styles.statLabel}>Pairs</Text>
           <Text style={styles.statValue}>{matchedPairs.length}/6</Text>
         </View>
       </View>
 
-      {/* Game Area */}
       {gameState === 'ready' ? (
         <View style={styles.readyContainer}>
-          <Icon name="flash-on" size={64} color={colors.primary} />
+          <Icon name="memory" size={64} color={colors.primary} />
           <Text style={styles.readyTitle}>Ready to Play?</Text>
           <Text style={styles.readyText}>
-            Match {getLanguageName()} words with their English translations as fast as you can!
+            Match {getLanguageName()} words with their corresponding images to test your memory!
           </Text>
           <TouchableOpacity style={styles.startButton} onPress={startGame}>
             <Text style={styles.startButtonText}>Start Game</Text>
@@ -304,16 +310,15 @@ const WordMatchGameScreen = ({ navigation }) => {
       ) : (
         <View style={styles.gameArea}>
           <View style={styles.cardsGrid}>
-            {gameWords.map(renderCard)}
+            {cards.map(renderCard)}
           </View>
         </View>
       )}
 
-      {/* Instructions */}
       {gameState === 'playing' && (
         <View style={styles.instructions}>
           <Text style={styles.instructionText}>
-            Tap cards to match {getLanguageName()} words with English translations
+            Tap cards to flip them and find matching pairs
           </Text>
         </View>
       )}
@@ -328,8 +333,18 @@ const styles = StyleSheet.create({
   },
   header: {
     backgroundColor: colors.primary,
-    padding: spacing.lg,
-    paddingTop: spacing.xl,
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
+    paddingTop: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -373,7 +388,7 @@ const styles = StyleSheet.create({
     marginBottom: spacing.xs,
   },
   statValue: {
-    fontSize: fonts.xl,
+    fontSize: fonts.lg,
     fontFamily: fonts.bold,
     color: colors.primary,
   },
@@ -420,55 +435,63 @@ const styles = StyleSheet.create({
   cardsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: spacing.md,
-    justifyContent: 'space-between',
+    justifyContent: responsive.isTablet ? 'flex-start' : 'space-between',
+    gap: getValueForDevice({
+      'small-phone': spacing.xs,
+      'medium-phone': spacing.sm,
+      'large-phone': spacing.sm,
+      'tablet': spacing.md,
+    }),
   },
-  gameCard: {
+  card: {
     width: (screenDimensions.width - getValueForDevice({
       'small-phone': spacing.md * 2,
       'medium-phone': spacing.lg * 2,
       'large-phone': spacing.lg * 2,
       'tablet': spacing.xl * 2,
-    }) - spacing.md) / 2,
-    aspectRatio: 1.5,
+    }) - spacing.sm * 2) / 3,
+    aspectRatio: 0.8,
     borderRadius: borderRadius.md,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: getValueForDevice({
-      'small-phone': spacing.sm,
-      'medium-phone': spacing.md,
-      'large-phone': spacing.md,
-      'tablet': spacing.lg,
-    }),
-    marginBottom: spacing.md,
+    marginBottom: spacing.sm,
     ...shadows.small,
     borderWidth: 2,
     borderColor: 'transparent',
   },
-  selectedCard: {
-    borderColor: colors.primary,
-    ...shadows.medium,
-  },
   matchedCard: {
     borderColor: colors.success,
+    backgroundColor: colors.success + '20',
   },
-  cardText: {
+  cardContent: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    flex: 1,
+    width: '100%',
+    padding: spacing.xs,
+  },
+  cardCharacter: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: spacing.xs,
+  },
+  cardWord: {
     fontSize: fonts.md,
-    fontFamily: fonts.medium,
-    color: colors.black,
-    textAlign: 'center',
-  },
-  nativeText: {
-    color: colors.primary,
     fontFamily: fonts.bold,
+    color: colors.primary,
+    textAlign: 'center',
+    marginBottom: spacing.xs,
   },
-  matchedText: {
-    color: colors.success,
+  cardMeaning: {
+    fontSize: fonts.xs,
+    fontFamily: fonts.medium,
+    color: colors.gray,
+    textAlign: 'center',
   },
   checkIcon: {
     position: 'absolute',
-    top: -8,
-    right: -8,
+    top: 4,
+    right: 4,
   },
   instructions: {
     backgroundColor: colors.white,
@@ -485,4 +508,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WordMatchGameScreen;
+export default MemoryCardsGameScreen;

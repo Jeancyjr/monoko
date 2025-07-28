@@ -6,16 +6,22 @@ import {
   ScrollView,
   TouchableOpacity,
   Animated,
-  Dimensions,
   Modal,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import MonokoLogo from '../components/MonokoLogo';
-
-const { width } = Dimensions.get('window');
+import { AchievementMascot } from '../components/AfricanCharacters';
+import { 
+  responsive, 
+  getIconSize,
+  getCharacterSize,
+  getValueForDevice,
+  getGridColumns,
+  getModalDimensions 
+} from '../utils/responsive';
 
 const AchievementsScreen = ({ navigation }) => {
   const { totalXP, completedLessons, streak } = useSelector(state => state.user);
@@ -33,7 +39,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'First Steps',
       description: 'Complete your first lesson',
       culturalNote: '"Hatua za kwanza" - Every journey begins with the first step',
-      icon: '👶',
+      icon: <AchievementMascot type="first-steps" size={32} />,
       xpReward: 25,
       category: 'learning',
       rarity: 'common',
@@ -48,7 +54,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'Week Warrior',
       description: 'Maintain a 7-day learning streak',
       culturalNote: 'Consistency is valued in African culture - "Haba na haba, hujaza kibaba"',
-      icon: '🔥',
+      icon: <AchievementMascot type="streak" size={32} />,
       xpReward: 100,
       category: 'consistency',
       rarity: 'uncommon',
@@ -63,7 +69,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'Word Collector',
       description: 'Learn 50 new words',
       culturalNote: 'Building vocabulary is like collecting precious gems',
-      icon: '💎',
+      icon: <AchievementMascot type="vocabulary" size={32} />,
       xpReward: 150,
       category: 'vocabulary',
       rarity: 'uncommon',
@@ -78,7 +84,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'Cultural Explorer',
       description: 'Read 20 cultural notes',
       culturalNote: 'Understanding culture is the key to understanding language',
-      icon: '🗺️',
+      icon: <AchievementMascot type="cultural" size={32} />,
       xpReward: 75,
       category: 'culture',
       rarity: 'common',
@@ -93,7 +99,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'Conversation Starter',
       description: 'Complete your first live session',
       culturalNote: 'Real conversation is where language comes alive',
-      icon: '💬',
+      icon: <AchievementMascot type="conversation" size={32} />,
       xpReward: 200,
       category: 'speaking',
       rarity: 'rare',
@@ -109,7 +115,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'Music Lover',
       description: 'Complete music-themed lessons',
       culturalNote: 'Lingala is the language of Central African music',
-      icon: '🎵',
+      icon: <AchievementMascot type="music" size={32} />,
       xpReward: 125,
       category: 'culture',
       rarity: 'uncommon',
@@ -124,7 +130,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'Kinshasa Navigator',
       description: 'Master urban Lingala expressions',
       culturalNote: 'Navigate the vibrant streets of Kinshasa with confidence',
-      icon: '🏙️',
+      icon: <AchievementMascot type="kinshasa" size={32} />,
       xpReward: 175,
       category: 'practical',
       rarity: 'rare',
@@ -140,7 +146,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'Fidel Script Master',
       description: 'Master 50 Fidel characters',
       culturalNote: 'The ancient Ge\'ez script is a treasure of Ethiopian heritage',
-      icon: '📜',
+      icon: <AchievementMascot type="script" size={32} />,
       xpReward: 250,
       category: 'writing',
       rarity: 'legendary',
@@ -155,7 +161,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'Coffee Ceremony Expert',
       description: 'Learn coffee ceremony vocabulary',
       culturalNote: 'Ethiopia is the birthplace of coffee - learn the sacred ceremony',
-      icon: '☕',
+      icon: <AchievementMascot type="coffee" size={32} />,
       xpReward: 100,
       category: 'culture',
       rarity: 'uncommon',
@@ -171,7 +177,7 @@ const AchievementsScreen = ({ navigation }) => {
       titleEnglish: 'African Polyglot',
       description: 'Start learning 2 different African languages',
       culturalNote: 'Africa\'s linguistic diversity is a beautiful tapestry',
-      icon: '🌍',
+      icon: <AchievementMascot type="polyglot" size={32} />,
       xpReward: 300,
       category: 'special',
       rarity: 'legendary',
@@ -275,7 +281,7 @@ const AchievementsScreen = ({ navigation }) => {
       >
         <View style={styles.achievementHeader}>
           <View style={[styles.achievementIcon, { backgroundColor: rarityColor + '20' }]}>
-            <Text style={styles.achievementEmoji}>{achievement.icon}</Text>
+            <View style={styles.achievementEmoji}>{achievement.icon}</View>
             {isUnlocked && (
               <View style={[styles.unlockedBadge, { backgroundColor: rarityColor }]}>
                 <Icon name="check" size={12} color={colors.white} />
@@ -356,7 +362,7 @@ const AchievementsScreen = ({ navigation }) => {
             </TouchableOpacity>
 
             <View style={[styles.modalIcon, { backgroundColor: rarityColor + '20' }]}>
-              <Text style={styles.modalEmoji}>{selectedAchievement.icon}</Text>
+              <View style={styles.modalEmoji}>{selectedAchievement.icon}</View>
             </View>
 
             <Text style={styles.modalTitle}>{selectedAchievement.title}</Text>
@@ -704,9 +710,15 @@ const styles = StyleSheet.create({
   modalContent: {
     backgroundColor: colors.white,
     borderRadius: borderRadius.xl,
-    padding: spacing.xl,
+    padding: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
     alignItems: 'center',
-    maxWidth: width * 0.9,
+    maxWidth: getModalDimensions().width,
+    maxHeight: getModalDimensions().maxHeight,
     borderWidth: 3,
   },
   closeButton: {
@@ -716,15 +728,31 @@ const styles = StyleSheet.create({
     padding: spacing.sm,
   },
   modalIcon: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+    width: getValueForDevice({
+      'small-phone': 64,
+      'medium-phone': 80,
+      'large-phone': 80,
+      'tablet': 96,
+    }),
+    height: getValueForDevice({
+      'small-phone': 64,
+      'medium-phone': 80,
+      'large-phone': 80,
+      'tablet': 96,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 32,
+      'medium-phone': 40,
+      'large-phone': 40,
+      'tablet': 48,
+    }),
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: spacing.lg,
   },
   modalEmoji: {
-    fontSize: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   modalTitle: {
     fontSize: fonts.xl,

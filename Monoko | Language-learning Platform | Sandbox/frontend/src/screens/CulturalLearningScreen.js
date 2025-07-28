@@ -6,16 +6,18 @@ import {
   ScrollView,
   TouchableOpacity,
   ImageBackground,
-  Dimensions,
   Animated,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useSelector } from 'react-redux';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import MonokoLogo from '../components/MonokoLogo';
-
-const { width } = Dimensions.get('window');
+import { 
+  responsive, 
+  getIconSize,
+  getValueForDevice 
+} from '../utils/responsive';
 
 const CulturalLearningScreen = ({ navigation }) => {
   const { selectedLanguage } = useSelector(state => state.user);

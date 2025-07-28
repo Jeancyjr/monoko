@@ -4,18 +4,23 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
   Animated,
   ScrollView,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import { useDispatch } from 'react-redux';
-import { colors, fonts, spacing, borderRadius, shadows } from '../theme';
+import { colors, fonts, spacing, borderRadius, shadows, screenDimensions } from '../theme';
 import MonokoLogo from '../components/MonokoLogo';
 import { setOnboardingComplete, setSelectedLanguage } from '../store/store';
-
-const { width, height } = Dimensions.get('window');
+import { GuideCharacter, LanguageCharacter } from '../components/AfricanCharacters';
+import { FadeInView, ScaleInView, SlideInView, createTimingAnimation, createSpringAnimation } from '../components/AnimatedComponents';
+import { 
+  responsive, 
+  getCharacterSize,
+  getValueForDevice,
+  getIconSize 
+} from '../utils/responsive';
 
 const OnboardingScreen = ({ navigation }) => {
   const dispatch = useDispatch();
@@ -24,6 +29,7 @@ const OnboardingScreen = ({ navigation }) => {
   const scrollViewRef = useRef(null);
   const [fadeAnim] = useState(new Animated.Value(0));
   const [slideAnim] = useState(new Animated.Value(50));
+  const [languageScaleAnims] = useState({});
 
   const onboardingSteps = [
     {
@@ -31,7 +37,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'Welcome to Monoko',
       subtitle: 'Your journey to speaking African languages starts here',
       content: 'Learn through culture, connect with native speakers, and discover the heart of Africa through language.',
-      icon: '🌍',
+      icon: <GuideCharacter type="welcome" size={getCharacterSize(64)} color={colors.primary} />,
       showLogo: true,
     },
     {
@@ -39,7 +45,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'AI-Powered Learning',
       subtitle: 'Transform your world into a classroom',
       content: 'Use Snap & Learn to instantly translate objects around you into Swahili, Lingala, or Amharic.',
-      icon: '📸',
+      icon: <GuideCharacter type="camera" size={getCharacterSize(64)} color={colors.secondary} />,
       features: [
         { icon: 'camera-alt', text: 'Point and learn vocabulary' },
         { icon: 'volume-up', text: 'Hear native pronunciation' },
@@ -51,7 +57,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'Live with a Local',
       subtitle: 'Practice with native speakers',
       content: 'Connect with verified native speakers from Kenya, Congo, and Ethiopia for authentic conversation practice.',
-      icon: '💬',
+      icon: <GuideCharacter type="conversation" size={getCharacterSize(64)} color={colors.accent} />,
       features: [
         { icon: 'video-call', text: '1-on-1 video sessions' },
         { icon: 'schedule', text: 'Flexible scheduling' },
@@ -63,7 +69,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'Learn Through Play',
       subtitle: 'Engaging games and achievements',
       content: 'Earn XP, maintain streaks, and unlock achievements as you progress through your language learning journey.',
-      icon: '🎮',
+      icon: <GuideCharacter type="games" size={getCharacterSize(64)} color={colors.warning} />,
       features: [
         { icon: 'videogame-asset', text: 'Interactive word games' },
         { icon: 'local-fire-department', text: 'Daily learning streaks' },
@@ -75,7 +81,7 @@ const OnboardingScreen = ({ navigation }) => {
       title: 'Choose Your Language',
       subtitle: 'Which African language would you like to learn?',
       content: 'Start with one language and explore others as you progress.',
-      icon: '🗣️',
+      icon: <GuideCharacter type="language" size={getCharacterSize(64)} color={colors.primary} />,
       isLanguageSelection: true,
     },
   ];
@@ -85,7 +91,7 @@ const OnboardingScreen = ({ navigation }) => {
       code: 'sw',
       name: 'Swahili',
       nativeName: 'Kiswahili',
-      flag: '🇰🇪',
+      character: <LanguageCharacter language="sw" size={getCharacterSize(48)} />,
       speakers: '200M+ speakers',
       regions: 'Kenya, Tanzania, Uganda',
       color: colors.swahili,
@@ -95,7 +101,7 @@ const OnboardingScreen = ({ navigation }) => {
       code: 'ln',
       name: 'Lingala',
       nativeName: 'Lingála',
-      flag: '🇨🇩',
+      character: <LanguageCharacter language="ln" size={getCharacterSize(48)} />,
       speakers: '70M+ speakers',
       regions: 'Congo DRC, Congo Republic',
       color: colors.lingala,
@@ -105,7 +111,7 @@ const OnboardingScreen = ({ navigation }) => {
       code: 'am',
       name: 'Amharic',
       nativeName: 'አማርኛ',
-      flag: '🇪🇹',
+      character: <LanguageCharacter language="am" size={getCharacterSize(48)} />,
       speakers: '57M+ speakers',
       regions: 'Ethiopia',
       color: colors.amharic,
@@ -114,25 +120,21 @@ const OnboardingScreen = ({ navigation }) => {
   ];
 
   useEffect(() => {
-    // Animate entrance
-    Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 1,
-        duration: 800,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 600,
-        useNativeDriver: true,
-      }),
-    ]).start();
+    fadeAnim.setValue(0);
+    slideAnim.setValue(50);
+    
+    const animations = [
+      createTimingAnimation(fadeAnim, 1, 800),
+      createSpringAnimation(slideAnim, 0, { tension: 80, friction: 10 }),
+    ];
+    
+    Animated.stagger(200, animations).start();
   }, [currentStep]);
 
   const handleNext = () => {
     if (currentStep < onboardingSteps.length - 1) {
       setCurrentStep(currentStep + 1);
-      scrollViewRef.current?.scrollTo({ x: (currentStep + 1) * width, animated: true });
+      scrollViewRef.current?.scrollTo({ x: (currentStep + 1) * screenDimensions.width, animated: true });
     } else {
       completeOnboarding();
     }
@@ -141,11 +143,21 @@ const OnboardingScreen = ({ navigation }) => {
   const handlePrevious = () => {
     if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
-      scrollViewRef.current?.scrollTo({ x: (currentStep - 1) * width, animated: true });
+      scrollViewRef.current?.scrollTo({ x: (currentStep - 1) * screenDimensions.width, animated: true });
     }
   };
 
   const handleLanguageSelect = (languageCode) => {
+    if (!languageScaleAnims[languageCode]) {
+      languageScaleAnims[languageCode] = new Animated.Value(1);
+    }
+    
+    const scaleAnim = languageScaleAnims[languageCode];
+    Animated.sequence([
+      createSpringAnimation(scaleAnim, 1.05, { tension: 150, friction: 8 }),
+      createSpringAnimation(scaleAnim, 1, { tension: 150, friction: 8 }),
+    ]).start();
+    
     setLocalSelectedLanguage(languageCode);
   };
 
@@ -170,40 +182,51 @@ const OnboardingScreen = ({ navigation }) => {
               },
             ]}
           >
-            <Text style={styles.stepIcon}>{step.icon}</Text>
+            <View style={styles.stepIcon}>{step.icon}</View>
             <Text style={styles.stepTitle}>{step.title}</Text>
             <Text style={styles.stepSubtitle}>{step.subtitle}</Text>
             <Text style={styles.stepDescription}>{step.content}</Text>
 
             <View style={styles.languagesContainer}>
-              {languages.map((language) => (
-                <TouchableOpacity
-                  key={language.code}
-                  style={[
-                    styles.languageCard,
-                    selectedLanguage === language.code && styles.selectedLanguageCard,
-                    { borderColor: language.color },
-                  ]}
-                  onPress={() => handleLanguageSelect(language.code)}
-                  activeOpacity={0.8}
-                >
-                  <View style={styles.languageHeader}>
-                    <Text style={styles.languageFlag}>{language.flag}</Text>
-                    <View style={styles.languageInfo}>
-                      <Text style={styles.languageName}>{language.name}</Text>
-                      <Text style={styles.languageNative}>{language.nativeName}</Text>
-                    </View>
-                  </View>
-                  <Text style={styles.languageSpeakers}>{language.speakers}</Text>
-                  <Text style={styles.languageRegions}>{language.regions}</Text>
-                  <Text style={styles.languageDescription}>{language.description}</Text>
-                  
-                  {selectedLanguage === language.code && (
-                    <View style={[styles.selectedIndicator, { backgroundColor: language.color }]}>
-                      <Icon name="check" size={20} color={colors.white} />
-                    </View>
-                  )}
-                </TouchableOpacity>
+              {languages.map((language, index) => (
+                <ScaleInView key={language.code} delay={index * 150}>
+                  <Animated.View
+                    style={{
+                      transform: [{ 
+                        scale: languageScaleAnims[language.code] || new Animated.Value(1) 
+                      }]
+                    }}
+                  >
+                    <TouchableOpacity
+                      style={[
+                        styles.languageCard,
+                        selectedLanguage === language.code && styles.selectedLanguageCard,
+                        { borderColor: language.color },
+                      ]}
+                      onPress={() => handleLanguageSelect(language.code)}
+                      activeOpacity={0.8}
+                    >
+                      <View style={styles.languageHeader}>
+                        <View style={styles.languageFlag}>{language.character}</View>
+                        <View style={styles.languageInfo}>
+                          <Text style={styles.languageName}>{language.name}</Text>
+                          <Text style={styles.languageNative}>{language.nativeName}</Text>
+                        </View>
+                      </View>
+                      <Text style={styles.languageSpeakers}>{language.speakers}</Text>
+                      <Text style={styles.languageRegions}>{language.regions}</Text>
+                      <Text style={styles.languageDescription}>{language.description}</Text>
+                      
+                      {selectedLanguage === language.code && (
+                        <ScaleInView delay={0}>
+                          <View style={[styles.selectedIndicator, { backgroundColor: language.color }]}>
+                            <Icon name="check" size={getIconSize(20)} color={colors.white} />
+                          </View>
+                        </ScaleInView>
+                      )}
+                    </TouchableOpacity>
+                  </Animated.View>
+                </ScaleInView>
               ))}
             </View>
           </Animated.View>
@@ -227,7 +250,7 @@ const OnboardingScreen = ({ navigation }) => {
               <MonokoLogo size="large" color="primary" showTagline={true} />
             </View>
           ) : (
-            <Text style={styles.stepIcon}>{step.icon}</Text>
+            <View style={styles.stepIcon}>{step.icon}</View>
           )}
           
           <Text style={styles.stepTitle}>{step.title}</Text>
@@ -237,12 +260,14 @@ const OnboardingScreen = ({ navigation }) => {
           {step.features && (
             <View style={styles.featuresContainer}>
               {step.features.map((feature, idx) => (
-                <View key={idx} style={styles.featureItem}>
-                  <View style={styles.featureIcon}>
-                    <Icon name={feature.icon} size={20} color={colors.primary} />
+                <ScaleInView key={idx} delay={idx * 100}>
+                  <View style={styles.featureItem}>
+                    <View style={styles.featureIcon}>
+                      <Icon name={feature.icon} size={getIconSize(20)} color={colors.primary} />
+                    </View>
+                    <Text style={styles.featureText}>{feature.text}</Text>
                   </View>
-                  <Text style={styles.featureText}>{feature.text}</Text>
-                </View>
+                </ScaleInView>
               ))}
             </View>
           )}
@@ -329,7 +354,7 @@ const OnboardingScreen = ({ navigation }) => {
           </Text>
           <Icon 
             name="arrow-forward" 
-            size={20} 
+            size={getIconSize(20)} 
             color={!canProceed ? colors.lightGray : colors.white} 
           />
         </TouchableOpacity>
@@ -346,7 +371,12 @@ const styles = StyleSheet.create({
   header: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    padding: spacing.lg,
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
   },
   skipButton: {
     padding: spacing.sm,
@@ -360,21 +390,27 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   stepContainer: {
-    width: width,
+    width: screenDimensions.width,
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: spacing.xl,
+    paddingHorizontal: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
   },
   stepContent: {
     alignItems: 'center',
-    maxWidth: width * 0.8,
+    maxWidth: responsive.isTablet ? screenDimensions.width * 0.6 : screenDimensions.width * 0.8,
   },
   logoSection: {
     marginBottom: spacing.xl,
   },
   stepIcon: {
-    fontSize: 80,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: spacing.lg,
   },
   stepTitle: {
@@ -409,9 +445,24 @@ const styles = StyleSheet.create({
     paddingVertical: spacing.sm,
   },
   featureIcon: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: getValueForDevice({
+      'small-phone': 36,
+      'medium-phone': 40,
+      'large-phone': 40,
+      'tablet': 48,
+    }),
+    height: getValueForDevice({
+      'small-phone': 36,
+      'medium-phone': 40,
+      'large-phone': 40,
+      'tablet': 48,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 18,
+      'medium-phone': 20,
+      'large-phone': 20,
+      'tablet': 24,
+    }),
     backgroundColor: colors.primaryLight + '20',
     alignItems: 'center',
     justifyContent: 'center',
@@ -429,7 +480,12 @@ const styles = StyleSheet.create({
   },
   languageCard: {
     backgroundColor: colors.white,
-    padding: spacing.lg,
+    padding: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
     borderRadius: borderRadius.lg,
     borderWidth: 2,
     borderColor: colors.lightGray,
@@ -446,7 +502,8 @@ const styles = StyleSheet.create({
     marginBottom: spacing.sm,
   },
   languageFlag: {
-    fontSize: 32,
+    alignItems: 'center',
+    justifyContent: 'center',
     marginRight: spacing.md,
   },
   languageInfo: {
@@ -484,9 +541,24 @@ const styles = StyleSheet.create({
     position: 'absolute',
     top: spacing.md,
     right: spacing.md,
-    width: 32,
-    height: 32,
-    borderRadius: 16,
+    width: getValueForDevice({
+      'small-phone': 28,
+      'medium-phone': 32,
+      'large-phone': 32,
+      'tablet': 36,
+    }),
+    height: getValueForDevice({
+      'small-phone': 28,
+      'medium-phone': 32,
+      'large-phone': 32,
+      'tablet': 36,
+    }),
+    borderRadius: getValueForDevice({
+      'small-phone': 14,
+      'medium-phone': 16,
+      'large-phone': 16,
+      'tablet': 18,
+    }),
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -511,14 +583,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xl,
+    paddingHorizontal: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
+    paddingBottom: getValueForDevice({
+      'small-phone': spacing.lg,
+      'medium-phone': spacing.xl,
+      'large-phone': spacing.xl,
+      'tablet': spacing.xxl,
+    }),
   },
   navButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.md,
+    paddingHorizontal: getValueForDevice({
+      'small-phone': spacing.md,
+      'medium-phone': spacing.lg,
+      'large-phone': spacing.lg,
+      'tablet': spacing.xl,
+    }),
+    paddingVertical: getValueForDevice({
+      'small-phone': spacing.sm,
+      'medium-phone': spacing.md,
+      'large-phone': spacing.md,
+      'tablet': spacing.lg,
+    }),
     borderRadius: borderRadius.lg,
     gap: spacing.sm,
   },

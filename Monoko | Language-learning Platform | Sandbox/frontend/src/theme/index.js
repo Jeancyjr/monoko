@@ -1,5 +1,7 @@
 // Monoko App Theme Configuration
 // Colors inspired by African landscapes and cultures
+import { Dimensions } from 'react-native';
+import { getFontSize, getSpacing, responsive } from '../utils/responsive';
 
 export const colors = {
   // Primary colors - based on Monoko logo green
@@ -56,14 +58,13 @@ export const fonts = {
   bold: 'System',
   light: 'System',
   
-  // Font sizes
-  xs: 12,
-  sm: 14,
-  md: 16,
-  lg: 18,
-  xl: 20,
-  xxl: 24,
-  xxxl: 32,
+  xs: getFontSize(12),
+  sm: getFontSize(14),
+  md: getFontSize(16),
+  lg: getFontSize(18),
+  xl: getFontSize(20),
+  xxl: getFontSize(24),
+  xxxl: getFontSize(32),
   
   // Line heights
   lineHeights: {
@@ -74,13 +75,13 @@ export const fonts = {
 };
 
 export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 48,
-  xxxl: 64,
+  xs: getSpacing(4),
+  sm: getSpacing(8),
+  md: getSpacing(16),
+  lg: getSpacing(24),
+  xl: getSpacing(32),
+  xxl: getSpacing(48),
+  xxxl: getSpacing(64),
 };
 
 export const borderRadius = {
@@ -122,12 +123,8 @@ export const animations = {
   slow: 500,
 };
 
-// Screen dimensions helpers
-export const layout = {
-  window: {
-    // These will be set dynamically based on device
-    width: 0,
-    height: 0,
-  },
-  isSmallDevice: false, // Will be set based on screen width
+export const screenDimensions = {
+  width: Dimensions.get('window').width,
+  height: Dimensions.get('window').height,
+  ...responsive,
 };
